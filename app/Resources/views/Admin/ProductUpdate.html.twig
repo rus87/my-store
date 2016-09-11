@@ -1,0 +1,29 @@
+{% extends "Admin/AdminBase.html.twig" %}
+
+{% block child_content %}
+    <div class="container">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.price) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.gender) }}
+        {{ form_row(form.season) }}
+        {{ form_row(form.category) }}
+
+        <table>
+            {% for i in 0..form.photos|length-1 %}
+                <tr>
+                    <td><img src="{{ asset(photos[i])|imagine_filter('my_thumb') }}"></td>
+                    <td>{{ form_row(form.photos[i].delete) }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+
+
+        {{ form_widget(form._token) }}
+        <input type="submit" value="Update">
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "Admin/AdminBase.html.twig" %}
+{% block child_content %}
+    <div class="container">
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <input type="submit" value="Add Product">
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
