@@ -1,3 +1,5 @@
+DOCTRINE
+-------------------------------------------------------------------------------
 Update database schema:
 php bin/console doctrine:schema:update --force
 
@@ -9,3 +11,11 @@ php bin/console doctrine:generate:entity
 
 Generate getters and setters:
 php bin/console doctrine:generate:entities AppBundle/Entity/Product
+
+-------------------------------------------------------------------------------
+
+Publish assets:
+php bin/console assets:install --symlink --relative
+
+Get all public services:
+php bin/console debug:container

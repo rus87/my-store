@@ -15,6 +15,7 @@
     ============================================ -->
     <link href='https://fonts.googleapis.com/css?family=Lato:400,400italic,900,700,700italic,300' rel='stylesheet' type='text/css'>
 
+    {% block css %}
     <!-- Bootstrap CSS
     ============================================ -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
@@ -26,31 +27,32 @@
 
     <!-- Fontawsome CSS
     ============================================ -->
-    <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
 
     <!-- owl.carousel CSS
     ============================================ -->
-    <link rel="stylesheet" href="{{ asset('css/owl.carousel.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset('css/owl.carousel.css') }}">
 
     <!-- jquery-ui CSS
     ============================================ -->
-    <link rel="stylesheet" href="{{ asset('css/jquery-ui.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset('css/jquery-ui.css') }}">
 
     <!-- meanmenu CSS
     ============================================ -->
-    <link rel="stylesheet" href="{{ asset('css/meanmenu.min.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset('css/meanmenu.min.css') }}">
 
     <!-- animate CSS
     ============================================ -->
-    <link rel="stylesheet" href="{{ asset('css/animate.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset('css/animate.css') }}">
 
     <!-- style CSS
     ============================================ -->
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset('css/style.css') }}">
 
     <!-- responsive CSS
     ============================================ -->
-    <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset('css/responsive.css') }}">
+    {% endblock %}
 
     <!-- modernizr JS
     ============================================ -->
@@ -75,12 +77,12 @@
                     <div class="col-md-6 col-sm-5">
                         <div class="currency-language">
                             <div class="currency-menu">
+                                My currency:
                                 <ul>
-                                    <li><a href="#">USD <i class="fa fa-angle-down"></i></a>
-                                        <ul class="currency-dropdown">
-                                            <li><a href="#">EUR</a></li>
-                                            <li><a href="#">USD</a></li>
-                                        </ul>
+                                    <li>
+                                        {{ form_start(form) }}
+                                        {{ form_widget(form.name) }}
+                                        {{ form_end(form) }}
                                     </li>
                                 </ul>
                             </div>
@@ -101,8 +103,8 @@
                                     <li><a href="account.html">My Account <i class="fa fa-angle-down"></i></a>
                                         <ul class="account-dropdown">
                                             <li><a href="wishlist.html">My Wishlist</a></li>
-                                            <li><a href="cart.html">My Cart</a></li>
-                                            <li><a href="checkout.html">Checkout</a></li>
+                                            <li><a href="{{ path('app_cart_showcart') }}">My Cart</a></li>
+                                            <li><a href="{{ path('app_checkout_index') }}">Checkout</a></li>
                                             <li><a href="blog.html">Blog</a></li>
                                             <li><a href="account.html">Log In</a></li>
                                         </ul>
@@ -150,9 +152,10 @@
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-4">
                         <ul class="header-r-cart">
-                            <li><a class="cart" href="cart.html">My Cart:2 items</a>
+                            <li><a class="cart" href="{{ path('app_cart_showcart') }}">My Cart: <span>0</span> items</a>
                                 <div class="mini-cart-content">
                                     <div class="cart-products-list">
+                                    <!--
                                         <div class="cart-products">
                                             <div class="cart-image">
                                                 <a href="#"><img src="img/cart/1.jpg" alt=""></a>
@@ -162,30 +165,16 @@
                                                 <a class="edit-product">Edit item</a>
                                                 <a class="remove-product">Remove item</a>
                                                 <div class="price-times">
-                                                    <span class="quantity"><strong> 1 x</strong></span>
                                                     <span class="p-price">$100.00</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="cart-products">
-                                            <div class="cart-image">
-                                                <a href="#"><img src="img/cart/2.jpg" alt=""></a>
-                                            </div>
-                                            <div class="cart-product-info">
-                                                <a href="#" class="product-name">Quisque in arcu </a>
-                                                <a class="edit-product">Edit item</a>
-                                                <a class="remove-product">Remove item</a>
-                                                <div class="price-times">
-                                                    <span class="quantity"><strong> 1 x</strong></span>
-                                                    <span class="p-price">$260.00</span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    -->
                                     </div>
                                     <div class="cart-price-list">
-                                        <p class="price-amount">SUBTotal : <span>$356.15</span> </p>
+                                        <p class="price-amount">SUBTotal : <span>0</span> </p>
                                         <div class="cart-buttons">
-                                            <a href="checkout.html">Checkout</a>
+                                            <a href="{{ path('app_checkout_index') }}">Checkout</a>
                                         </div>
                                     </div>
                                 </div>
@@ -205,82 +194,62 @@
                         <div class="mainmenu">
                             <nav>
                                 <ul id="nav">
-                                    <li class="current"><a href="{{ path('app_home_home') }}">Home</a></li>
-                                    <li><a href="{{ path('app_products_productsbygender', {'gender': 'female'}) }}">Women</a>
+                                    <li class="current"><a href="{{ path('app_home_home') }}">{{ 'Home'|trans([], 'mybase') }}</a></li>
+                                    <li>
+                                        <a href="{{ path('app_products_showbygender', {'gender': 'male'}) }}">Men</a>
                                         <div class="megamenu">
                                             <div class="megamenu-list clearfix">
+                                                {% for category in categories %}
+                                                    {% if loop.index != categories|length %}
                                                         <span>
-                                                            <a href="{{ path('app_products_productsshow', {'gender': 'female', 'category': 'jacket'}) }}" class="mega-title">Jackets</a>
-                                                            <a href="#">Blazers</a>
-                                                            <a href="#">Jackets</a>
-                                                            <a href="#">Collections</a>
-                                                            <a href="#">T-Shirts</a>
+                                                            <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'male', 'category': category.getName}) }}" class="mega-title">{{ category.getDisplayedName }}</a>
+                                                            {% for subcategory in category.getChildren %}
+                                                                <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'male', 'category': subcategory.getName}) }}">{{ subcategory.getDisplayedName }}</a>
+                                                            {% endfor %}
                                                         </span>
-                                                        <span>
-                                                            <a href="{{ path('app_products_productsshow', {'gender': 'female', 'category': 'sweater'}) }}" class="mega-title">Sweaters</a>
-                                                            <a href="#">Cocktail</a>
-                                                            <a href="#">Sunglass</a>
-                                                            <a href="#">Evening</a>
-                                                            <a href="#">Footwear</a>
-                                                        </span>
-                                                        <span>
-                                                            <a href="{{ path('app_products_productsshow', {'gender': 'female', 'category': 'trousers'}) }}" class="mega-title">Trousers</a>
-                                                            <a href="#">Bootees Bags</a>
-                                                            <a href="#">Furniture</a>
-                                                            <a href="#">Exclusive</a>
-                                                            <a href="#">Jackets</a>
-                                                        </span>
+                                                    {% else %}
                                                         <span class="no-margin">
-                                                            <a href="{{ path('app_products_productsshow', {'gender': 'female', 'category': 'blouse'}) }}" class="mega-title">Blouses</a>
-                                                            <a href="#">Earrings</a>
-                                                            <a href="#">Nosepins</a>
-                                                            <a href="#">Braclets</a>
-                                                            <a href="#">Bangels</a>
-                                                        </span>
-                                                        <span class="no-margin">
-                                                            <a href="#" class="mega-banner">
-                                                                <img src="{{ asset('img/mega-banner.jpg') }}" alt="">
-                                                            </a>
-                                                        </span>
+                                                                <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'male', 'category': category.getName}) }}" class="mega-title">{{ category.getDisplayedName }}</a>
+                                                            {% for subcategory in category.getChildren %}
+                                                                <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'male', 'category': subcategory.getName}) }}">{{ subcategory.getDisplayedName }}</a>
+                                                            {% endfor %}
+                                                            </span>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <span class="no-margin">
+                                                    <a href="#" class="mega-banner">
+                                                        <img src="{{ asset('img/mega-banner.jpg') }}" alt="">
+                                                    </a>
+                                                </span>
                                             </div>
                                         </div>
                                     </li>
-                                    <li><a href="{{ path('app_products_productsbygender', {'gender': 'male'}) }}">Men</a>
+                                    <li>
+                                        <a href="{{ path('app_products_showbygender', {'gender': 'female'}) }}">Women</a>
                                         <div class="megamenu">
                                             <div class="megamenu-list clearfix">
+                                                {% for category in categories %}
+                                                    {% if loop.index != categories|length %}
                                                         <span>
-                                                            <a href="{{ path('app_products_productsshow', {'gender': 'male', 'category': 'jacket'}) }}" class="mega-title">Jackets</a>
-                                                            <a href="#">Blazers</a>
-                                                            <a href="#">Jackets</a>
-                                                            <a href="#">Collections</a>
-                                                            <a href="#">T-Shirts</a>
+                                                            <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'female', 'category': category.getName}) }}" class="mega-title">{{ category.getDisplayedName }}</a>
+                                                            {% for subcategory in category.getChildren %}
+                                                                <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'female', 'category': subcategory.getName}) }}">{{ subcategory.getDisplayedName }}</a>
+                                                            {% endfor %}
                                                         </span>
-                                                        <span>
-                                                            <a href="{{ path('app_products_productsshow', {'gender': 'male', 'category': 'sweater'}) }}" class="mega-title">Sweaters</a>
-                                                            <a href="#">Cocktail</a>
-                                                            <a href="#">Sunglass</a>
-                                                            <a href="#">Evening</a>
-                                                            <a href="#">Footwear</a>
-                                                        </span>
-                                                        <span>
-                                                            <a href="{{ path('app_products_productsshow', {'gender': 'male', 'category': 'trousers'}) }}" class="mega-title">Trousers</a>
-                                                            <a href="#">Bootees Bags</a>
-                                                            <a href="#">Furniture</a>
-                                                            <a href="#">Exclusive</a>
-                                                            <a href="#">Jackets</a>
-                                                        </span>
+                                                    {% else %}
                                                         <span class="no-margin">
-                                                            <a href="{{ path('app_products_productsshow', {'gender': 'male', 'category': 'blouse'}) }}" class="mega-title">Blouses</a>
-                                                            <a href="#">Earrings</a>
-                                                            <a href="#">Nosepins</a>
-                                                            <a href="#">Braclets</a>
-                                                            <a href="#">Bangels</a>
-                                                        </span>
-                                                        <span class="no-margin">
-                                                            <a href="#" class="mega-banner">
-                                                                <img src="img/mega-banner.jpg" alt="">
-                                                            </a>
-                                                        </span>
+                                                                <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'female', 'category': category.getName}) }}" class="mega-title">{{ category.getDisplayedName }}</a>
+                                                            {% for subcategory in category.getChildren %}
+                                                                <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'female', 'category': subcategory.getName}) }}">{{ subcategory.getDisplayedName }}</a>
+                                                            {% endfor %}
+                                                            </span>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <span class="no-margin">
+                                                    <a href="#" class="mega-banner">
+                                                        <img src="{{ asset('img/mega-banner.jpg') }}" alt="">
+                                                    </a>
+                                                </span>
                                             </div>
                                         </div>
                                     </li>
@@ -410,14 +379,14 @@
                     <div class="col-md-2">
                         <div class="single-brand">
                             <a href="#">
-                                <img src="img/brand/1.jpg" alt="">
+                                <img src="{{ asset('img/brand/1.jpg') }}" alt="">
                             </a>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="single-brand">
                             <a href="#">
-                                <img src="img/brand/6.jpg" alt="">
+                                <img src="{{ asset('img/brand/6.jpg') }}" alt="">
                             </a>
                         </div>
                     </div>
@@ -622,56 +591,64 @@
     </div>
 </div>
 <!--End of Quickview Product-->
-<!-- jquery
+{% block js %}
+    <!-- jquery
 ============================================ -->
-<script src="{{ asset('js/vendor/jquery-1.11.3.min.js') }}"></script>
+    <script src="{{ asset('js/vendor/jquery-1.11.3.min.js') }}"></script>
 
-<!-- bootstrap JS
-============================================ -->
-<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <!-- bootstrap JS
+    ============================================ -->
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
 
-<!-- nivo slider js
-============================================ -->
-<script src="{{ asset('lib/nivo-slider/js/jquery.nivo.slider.js') }}" type="text/javascript"></script>
-<script src="{{ asset('lib/nivo-slider/home.js') }}" type="text/javascript"></script>
+    <!-- nivo slider js
+    ============================================ -->
+    <script src="{{ asset('lib/nivo-slider/js/jquery.nivo.slider.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('lib/nivo-slider/home.js') }}" type="text/javascript"></script>
 
-<!-- wow JS
-============================================ -->
-<script src="{{ asset('js/wow.min.js') }}"></script>
+    <!-- wow JS
+    ============================================ -->
+    <script src="{{ asset('js/wow.min.js') }}"></script>
 
-<!-- meanmenu JS
-============================================ -->
-<script src="{{ asset('js/jquery.meanmenu.js') }}"></script>
+    <!-- meanmenu JS
+    ============================================ -->
+    <script src="{{ asset('js/jquery.meanmenu.js') }}"></script>
 
-<!-- owl.carousel JS
-============================================ -->
-<script src="{{ asset('js/owl.carousel.min.js') }}"></script>
+    <!-- owl.carousel JS
+    ============================================ -->
+    <script src="{{ asset('js/owl.carousel.min.js') }}"></script>
 
-<!-- price-slider JS
-============================================ -->
-<script src="{{ asset('js/jquery-price-slider.js') }}"></script>
+    <!-- price-slider JS
+    ============================================ -->
+    <script src="{{ asset('js/jquery-price-slider.js') }}"></script>
 
-<!-- scrollUp JS
-============================================ -->
-<script src="{{ asset('js/jquery.scrollUp.min.js') }}"></script>
+    <!-- scrollUp JS
+    ============================================ -->
+    <script src="{{ asset('js/jquery.scrollUp.min.js') }}"></script>
 
-<!--Countdown js-->
-<script src="{{ asset('js/jquery.countdown.min.js') }}"></script>
+    <!--Countdown js-->
+    <script src="{{ asset('js/jquery.countdown.min.js') }}"></script>
 
-<!-- Sticky Menu JS
-============================================ -->
-<script src="{{ asset('js/jquery.sticky.js') }}"></script>
+    <!-- Sticky Menu JS
+    ============================================ -->
+    <script src="{{ asset('js/jquery.sticky.js') }}"></script>
 
-<!-- Elevatezoom JS
-============================================ -->
-<script src="{{ asset('js/jquery.elevateZoom-3.0.8.min.js') }}"></script>
+    <!-- Elevatezoom JS
+    ============================================ -->
+    <script src="{{ asset('js/jquery.elevateZoom-3.0.8.min.js') }}"></script>
 
-<!-- plugins JS
-============================================ -->
-<script src="{{ asset('js/plugins.js') }}"></script>
+    <!-- plugins JS
+    ============================================ -->
+    <script src="{{ asset('js/plugins.js') }}"></script>
 
-<!-- main JS
-============================================ -->
-<script src="{{ asset('js/main.js') }}"></script>
+    <!-- main JS
+    ============================================ -->
+    <script src="{{ asset('js/main.js') }}"></script>
+
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+    <script src="{{ asset("js/jquery-2.2.0.js") }}" type="text/javascript"></script>
+    <script src="{{ asset("js/cart.js") }}" type="text/javascript"></script>
+    <script src="{{ asset("js/currency.js") }}" type="text/javascript"></script>
+{% endblock %}
 </body>
 </html>

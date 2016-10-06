@@ -1,0 +1,10 @@
+{% extends "Admin/ProductsAdd/Sweater.html.twig" %}
+
+{% block child_content %}
+    {{ parent() }}
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script src="{{ asset("js/ProductAdd/Blouse/AddRemovePhotoFields.js") }}" type="text/javascript"></script>
+{% endblock %}

@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
+
 /**
  * Category
  *
@@ -30,12 +31,24 @@ class Category
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="Product", mappedBy="category")
+     * @ORM\OneToMany(targetEntity="Product", mappedBy="category", fetch="LAZY")
      */
     private $products;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Category", mappedBy="parent")
+     */
+    private $children;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="children")
+     */
+    private $parent;
+
+
     public function __construct()
     {
+        $this->products = new ArrayCollection();
         $this->products = new ArrayCollection();
     }
 
@@ -117,5 +130,72 @@ class Category
     public function removeProduct(\AppBundle\Entity\Product $products)
     {
         $this->products->removeElement($products);
+    }
+
+    public function getDisplayedName()
+    {
+        $displayedName = $this->getName();
+        if($displayedName{mb_strlen($displayedName) - 1} != 's')
+            $displayedName = $displayedName.'s';
+        return ucfirst($displayedName);
+    }
+
+    /**
+     * Add child
+     *
+     * @param \AppBundle\Entity\Category $child
+     *
+     * @return Category
+     */
+    public function addChild(\AppBundle\Entity\Category $child)
+    {
+        $this->children[] = $child;
+        $child->setParent($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove child
+     *
+     * @param \AppBundle\Entity\Category $child
+     */
+    public function removeChild(\AppBundle\Entity\Category $child)
+    {
+        $this->children->removeElement($child);
+    }
+
+    /**
+     * Get children
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
+     * Set parent
+     *
+     * @param \AppBundle\Entity\Category $parent
+     *
+     * @return Category
+     */
+    public function setParent(\AppBundle\Entity\Category $parent = null)
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * Get parent
+     *
+     * @return \AppBundle\Entity\Category
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
 }

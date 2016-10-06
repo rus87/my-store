@@ -3,6 +3,9 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManager;
+use AppBundle\Entity\Category;
+use AppBundle\Entity\Product;
 
 /**
  * CategoryRepository
@@ -12,4 +15,109 @@ use Doctrine\ORM\EntityRepository;
  */
 class CategoryRepository extends EntityRepository
 {
+    public function countProducts(Category $category, $recursive = false)
+    {
+        $em = $this->getEntityManager();
+        $className = $this->getProductsClassName($category);
+        if($recursive == false){
+            $query = $em->createQuery(
+                "SELECT COUNT(p.id) FROM AppBundle\Entity\Products\\".$className." p JOIN p.category c WHERE c.name = :cat");
+            $query->setParameter('cat', $category->getName());
+            return $query->getSingleScalarResult();
+        }
+        else{
+            $innerCats = $em->getRepository('AppBundle:Category')->getAllChildren($category);
+            $q = "SELECT COUNT(p.id) FROM AppBundle\Entity\Products\\".$className." p JOIN p.category c WHERE (c.name = :cat";
+            foreach($innerCats as $cat)
+                $q = $q." OR c.name = :".$cat->getName();
+            $q = $q.")";
+            $query = $em->createQuery($q);
+            foreach($innerCats as $cat)
+                $query->setParameter($cat->getName(), $cat->getName());
+            $query->setParameter('cat', $category->getName());
+            return $query->getSingleScalarResult();
+        }
+    }
+
+    /**
+     * @param Category|string $category
+     * @return array|null
+     */
+    public function getAllParents($category)
+    {
+        if(! $category instanceof Category)
+            if(gettype($category) == "string")
+                $category = $this->findOneBy(['name' => $category]);
+        $parent = $category->getParent();
+        if($parent == null) return null;
+        $parents []= $parent;
+        while($parent != null){
+            $parent = $parent->getParent();
+            if($parent != null)
+                $parents []= $parent;
+        }
+        return $parents;
+    }
+
+    /**
+     * @param Category $category
+     * @return array
+     */
+    public function getAllChildren($category)
+    {
+        $allChildren = [];
+        $children = $category->getChildren()->getValues();
+        $allChildren = array_merge($allChildren, $children);
+        for($i=0; $i<count($allChildren); $i++)
+        {
+            $children = $allChildren[$i]->getChildren()->getValues();
+            $allChildren = array_merge($allChildren, $children);
+        }
+       return $allChildren;
+    }
+
+    /**
+     * @param Category $category
+     * @return array Category
+     */
+    public function getBranchCategories(Category $category)
+    {
+        $branchCategories = [];
+        $allParentCats = $this->getAllParents($category);
+        ($allParentCats == null) ? $rootCat = $category : $rootCat = $allParentCats[count($allParentCats)-1];
+        $branchCategories []= $rootCat;
+        return array_merge($branchCategories, $this->getAllChildren($rootCat));
+    }
+
+    /**
+     * This method returns a class name of the products which is stored in given
+     * category, assuming that product's root category has the same name as the class.
+     *
+     * @param Category|string $category
+     * @return string
+     */
+    public function getProductsClassName($category)
+    {
+        if(! $category instanceof Category)
+            if(gettype($category) == "string")
+                $category = $this->findOneBy(['name' => $category]);
+
+        $tmp = $this->getAllParents($category);
+        if($tmp == null) return ucfirst($category->getName());
+        return ucfirst($tmp[count($tmp)-1]->getName());
+    }
+
+    /**
+     * @param string $className
+     * @return array Category
+     */
+    public function getClassCategories($className)
+    {
+        $rootCat = $this->findOneBy(['name' => $className]);
+        $classCats[] = $rootCat;
+        $classCats = array_merge($classCats, $this->getAllChildren($rootCat));
+        return $classCats;
+
+    }
+
 }

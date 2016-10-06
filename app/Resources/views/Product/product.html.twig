@@ -1,0 +1,422 @@
+{% extends 'mybase.html.twig' %}
+{% block child_content %}
+    {% include 'breadcrumbs.html.twig' with {"crumbs": crumbs} %}
+    <!--Product Details Area Start-->
+    <div class="product-deails-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-9 col-md-9">
+                    <div class="product-details-content row">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="zoomWrapper">
+                                <div id="img-1" class="zoomWrapper single-zoom">
+                                    <a href="#">
+                                        <img id="zoom1" src="{{ (product.getMainPhoto1Path)|imagine_filter('shop_main_thumb') }}" data-zoom-image="{{ asset(product.getMainPhoto1Path) }}" alt="big-1">
+                                    </a>
+                                </div>
+                                <div class="product-thumb row">
+                                    <ul class="p-details-slider" id="gallery_01">
+                                        <li class="col-md-4">
+                                            <a class="elevatezoom-gallery" href="#" data-image="{{ (product.getMainPhoto1Path)|imagine_filter('shop_main_thumb') }}" data-zoom-image="{{ asset(product.getMainPhoto1Path) }}"><img src="{{ (product.getMainPhoto1Path)|imagine_filter('shop_main_thumb') }}" alt=""></a>
+                                        </li>
+                                        <li class="col-md-4">
+                                            <a class="elevatezoom-gallery" href="#" data-image="{{ (product.getMainPhoto2Path)|imagine_filter('shop_main_thumb') }}" data-zoom-image="{{ asset(product.getMainPhoto2Path) }}"><img src="{{ (product.getMainPhoto2Path)|imagine_filter('shop_main_thumb') }}" alt=""></a>
+                                        </li>
+                                        {% for photo in product.getPhotos %}
+                                            <li class="col-md-4">
+                                                <a class="elevatezoom-gallery" href="#" data-image="{{ (photo.getPath)|imagine_filter('shop_main_thumb') }}" data-zoom-image="{{ asset(photo.getPath) }}"><img src="{{ (photo.getPath)|imagine_filter('shop_main_thumb') }}" alt=""></a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="product-details-conetnt">
+                                <div class="shipping">
+                                    <div class="single-service">
+                                        <span class="fa fa-truck"></span>
+                                        <div class="service-text-container">
+                                            <h3>fREE SHIPPING</h3>
+                                            <p>One order over $99</p>
+                                        </div>
+                                    </div>
+                                    <div class="single-service">
+                                        <span class="fa fa-cube"></span>
+                                        <div class="service-text-container">
+                                            <h3>UNLIMITED UNLIMITED</h3>
+                                            <p>Lorem ipsum dolor sit amet</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="product-name">
+                                    <h1> {{ product.title }} </h1>
+                                </div>
+                                <p class="no-rating no-margin"><a href="#">Be the first to review this product</a></p>
+                                <p class="availability">Availability: <span>In stock</span></p>
+                                <div class="price-box">
+                                    <p class="old-price">
+                                        <span class="price">{{ product.price ~ ' ' ~ product.currency.name }}</span>
+                                    </p>
+                                    <p class="special-price">
+                                        <span class="price">{{ product.price ~ ' ' ~ product.currency.name }}</span>
+                                    </p>
+                                </div>
+                                <div class="details-description">
+                                    <p>{{ product.description }}</p>
+                                    <img src="{{ asset('img/icon/social_link.png') }}" alt="">
+                                </div>
+                                <div class="add-to-buttons">
+                                    <ul>
+                                        <li><a href="#"><i class="fa fa-heart"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-refresh"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-envelope"></i></a></li>
+                                    </ul>
+                                </div>
+                                <div class="add-to-cart-qty">
+                                    <div class="timer">
+                                        <div data-countdown="2022/01/01" class="timer-grid"></div>
+                                    </div>
+                                    <div class="cart-qty-button">
+                                        <label for="qty">Qty:</label>
+                                        <input type="text" class="input-text qty" value="1" maxlength="12" id="qty" name="qty">
+                                        <button class="button btn-cart" type="button"><span>Add to Cart</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <div class="p-details-tab">
+                                <ul role="tablist" class="nav nav-tabs">
+                                    <li class="active" role="presentation"><a data-toggle="tab" role="tab" aria-controls="description" href="#description">Product Description</a></li>
+                                    <li role="presentation"><a data-toggle="tab" role="tab" aria-controls="reviews" href="#reviews">Reviews</a></li>
+                                    <li role="presentation"><a data-toggle="tab" role="tab" aria-controls="tags" href="#tags">Product Tags</a></li>
+                                </ul>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="tab-content review product-details">
+                                <div id="description" class="tab-pane active" role="tabpanel">
+                                    <p> {{ product.description }} </p>
+                                </div>
+                                <div id="reviews" class="tab-pane" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-lg-5 col-md-3 col-sm-12">
+                                            <div class="review-left">
+                                                <p><span> Review by </span> <a href="#">BootExperts</a></p>
+                                                <div class="review-rating">
+                                                    <p>price</p>
+                                                    <div class="rating">
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="review-rating">
+                                                    <p>value</p>
+                                                    <div class="rating">
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="review-rating">
+                                                    <p>quality</p>
+                                                    <div class="rating">
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                    </div>
+                                                </div>
+                                                <p>BootExperts <span class="italic">(Posted on 11/3/2016)</span></p>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-7 col-md-9 col-sm-12">
+                                            <div class="review-right">
+                                                <h3>You're reviewing: Tristique ut lectus</h3>
+                                                <h4>How do you rate this product? *</h4>
+                                                <form method="post" action="mail.php">
+                                                    <div class="p-details-table table-responsive">
+                                                        <table>
+                                                            <thead>
+                                                            <tr>
+                                                                <th></th>
+                                                                <th><span>1 star</span></th>
+                                                                <th><span>2 stars</span></th>
+                                                                <th><span>3 stars</span></th>
+                                                                <th><span>4 stars</span></th>
+                                                                <th><span>5 stars</span></th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr>
+                                                                <th>Price</th>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Value</th>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Quality</th>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                                <td><input type="radio" value="" class="radio"></td>
+                                                            </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div class="form-top">
+                                                        <div class="row">
+                                                            <div id="review-form">
+                                                                <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                                                                    <label>Nickname<span class="required" title="required">*</span></label>
+                                                                    <input type="text" name="name" class="form-control">
+                                                                </div>
+                                                                <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                                                                    <label>Summary of Your Review<span class="required" title="required">*</span></label>
+                                                                    <input type="text" name="subject" class="form-control">
+                                                                </div>
+                                                                <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                                                                    <label>Review<span class="required" title="required">*</span></label>
+                                                                    <textarea name="message" class="yourmessage"></textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="buttons-set">
+                                                        <button class="button" type="submit"><span>Submit Review</span></button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="tags" class="tab-pane" role="tabpanel">
+                                    <div class="product-tag-name">
+                                        <form method="post" action="mail.php">
+                                            <div class="form-top">
+                                                <div class="row">
+                                                    <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                                                        <label>Add Your Tags:</label>
+                                                        <input type="text" class="form-control">
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                    <div class="col-md-12">
+                                                        <button class="button" type="button">
+                                                            <span>Add Tags</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <p>Use spaces to separate tags. Use single quotes (') for phrases.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-carousel-area section-top-padding">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="section-title"><h2>Upsell Products</h2></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="upsell-product-details-carousel">
+                                <div class="col-md-3">
+                                    <div class="single-product-item">
+                                        <div class="single-product clearfix">
+                                            <a href="#">
+                                                    <span class="product-image">
+                                                        <img src="img/product/2.jpg" alt="">
+                                                    </span>
+                                            </a>
+                                        </div>
+                                        <h2 class="single-product-name"><a href="#">Aliquam consequat</a></h2>
+                                        <div class="price-box">
+                                            <p class="special-price">
+                                                <span class="price">$435.00</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="single-product-item">
+                                        <div class="single-product clearfix">
+                                            <a href="#">
+                                                    <span class="product-image">
+                                                        <img src="img/product/18.jpg" alt="">
+                                                    </span>
+                                            </a>
+                                        </div>
+                                        <h2 class="single-product-name"><a href="#">Accumsan elit </a></h2>
+                                        <div class="price-box">
+                                            <p class="special-price">
+                                                <span class="price">$333.00</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="single-product-item">
+                                        <div class="single-product clearfix">
+                                            <a href="#">
+                                                    <span class="product-image">
+                                                        <img src="img/product/14.jpg" alt="">
+                                                    </span>
+                                            </a>
+                                        </div>
+                                        <h2 class="single-product-name"><a href="#">Etiam gravida</a></h2>
+                                        <div class="price-box">
+                                            <p class="special-price">
+                                                <span class="price">$464.00</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="single-product-item">
+                                        <div class="single-product clearfix">
+                                            <a href="#">
+                                                    <span class="product-image">
+                                                        <img src="img/product/6.jpg" alt="">
+                                                    </span>
+                                            </a>
+                                        </div>
+                                        <h2 class="single-product-name"><a href="#"> Donec ac tempus </a></h2>
+                                        <div class="price-box">
+                                            <p class="old-price">
+                                                <span class="price">$321.00</span>
+                                            </p>
+                                            <p class="special-price">
+                                                <span class="price">$222.00</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="single-product-item">
+                                        <div class="single-product clearfix">
+                                            <a href="#">
+                                                    <span class="product-image">
+                                                        <img src="img/product/13.jpg" alt="">
+                                                    </span>
+                                            </a>
+                                        </div>
+                                        <h2 class="single-product-name"><a href="#">Primis in faucibus</a></h2>
+                                        <div class="price-box">
+                                            <p class="old-price">
+                                                <span class="price">$122.00</span>
+                                            </p>
+                                            <p class="special-price">
+                                                <span class="price">$100.00</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="single-product-item">
+                                        <div class="single-product clearfix">
+                                            <a href="#">
+                                                    <span class="product-image">
+                                                        <img src="img/product/11.jpg" alt="">
+                                                    </span>
+                                            </a>
+                                        </div>
+                                        <h2 class="single-product-name"><a href="#">Pellentesque habitant </a></h2>
+                                        <div class="price-box">
+                                            <p class="old-price">
+                                                <span class="price">$789.00</span>
+                                            </p>
+                                            <p class="special-price">
+                                                <span class="price">$567.00</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    <div class="single-products-category">
+                        <div class="section-title"><h2>Related PRODUCTS</h2></div>
+                        <div class="category-products">
+                            {% for product in randomProducts %}
+                                <div class="product-items">
+                                    <div class="p-category-image">
+                                        <a href="{{ path('app_product_show', {id: product.Id}) }}">
+                                            <img alt="" src="{{ (product.getMainPhoto1Path)|imagine_filter('related_preview_thumb') }}">
+                                        </a>
+                                    </div>
+                                    <div class="p-category-text">
+                                        <h2 class="category-product-name"><a href="#">{{ product.title }}</a></h2>
+                                        <div class="price-box">
+                                            <p class="special-price">
+                                                <span class="price">{{ product.price ~ ' ' ~ product.currency.name }}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                    <div class="sidebar-content">
+                        <div class="section-title no-margin"><h2>Popular Tags</h2></div>
+                        <div class="popular-tags">
+                            <ul class="tag-list">
+                                <li><a href="#">Curae</a></li>
+                                <li><a href="#">Vestibulum</a></li>
+                                <li><a href="#">ante</a></li>
+                                <li><a href="#">cubilia</a></li>
+                                <li><a href="#">et</a></li>
+                                <li><a href="#">faucibus</a></li>
+                                <li><a href="#">in</a></li>
+                                <li><a href="#">ipsum</a></li>
+                                <li><a href="#">luctus</a></li>
+                                <li><a href="#">orci</a></li>
+                                <li><a href="#">posuere</a></li>
+                                <li><a href="#">primis</a></li>
+                                <li><a href="#">ultrices</a></li>
+                            </ul>
+                            <div class="tag-actions">
+                                <a href="#">View All Tags</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sidebar-content">
+                        <div class="section-title no-margin"><h2>Compare Products </h2></div>
+                        <div class="block-content">
+                            <p class="empty">You have no items to compare.</p>
+                        </div>
+                    </div>
+                    <div class="sidebar-content">
+                        <div class="banner-box">
+                            <a href="#"><img alt="" src="img/banner/14.jpg"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--End of Product Details Area-->
+{% endblock %}

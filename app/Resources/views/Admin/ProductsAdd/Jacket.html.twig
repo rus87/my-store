@@ -1,0 +1,51 @@
+{% extends "Admin/ProductAdd.html.twig" %}
+
+{% block child_content %}
+    <div class="container">
+    {% block nav_tabs %}
+        {{ parent() }}
+    {% endblock %}
+    {{ form_start(form) }}
+
+    {% block text_fields %}
+        {{ parent() }}
+
+        <div class="form-group">
+            {{ form_label(form.sleeveLength) }}
+            {{ form_errors(form.sleeveLength) }}
+            {{ form_widget(form.sleeveLength, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.filling) }}
+            {{ form_errors(form.filling) }}
+            {{ form_widget(form.filling, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.outerMaterial) }}
+            {{ form_errors(form.outerMaterial) }}
+            {{ form_widget(form.outerMaterial, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.seasonality) }}
+            {{ form_errors(form.seasonality) }}
+            {{ form_widget(form.seasonality, {'attr': {'class': 'form-control'}}) }}
+        </div>
+    {% endblock %}
+
+    {% block photo %}
+        {{ parent() }}
+    {% endblock %}
+
+    {% block submit %}
+        {{ parent() }}
+    {% endblock %}
+
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script src="{{ asset("js/ProductAdd/Jacket/AddRemovePhotoFields.js") }}" type="text/javascript"></script>
+{% endblock %}

@@ -33,17 +33,22 @@ class CrumbsGenerator
                     $crumbs []= $crumb;
                     break;
 
-                case 'app_products_productsbygender':
+                case 'app_products_showbygender':
                     $item->getRouteParams()['gender'] == 'male' ? $crumb->setMark('Men') : $crumb->setMark('Women');
-                    $crumb->setLink($this->router->generate($item->getRouteName(), $item->getRouteParams()));
+                    $crumb->setLink($this->router->generate('app_home_home'));
                     $crumbs []= $crumb;
                     break;
 
-                case 'app_products_productsshow':
+                case 'app_products_showbygenderandcategory':
                     $crumb->setLink($this->router->generate($item->getRouteName(), $item->getRouteParams()));
                     $crumb->setMark(ucfirst($item->getRouteParams()['category']));
                     if($crumb->getMark(){mb_strlen($crumb->getMark()) - 1} != 's')
                         $crumb->setMark($crumb->getMark().'s');
+                    $crumbs []= $crumb;
+                    break;
+
+                case 'app_product_show':
+                    $crumb->setMark(ucfirst($item->getMark()));
                     $crumbs []= $crumb;
                     break;
             }

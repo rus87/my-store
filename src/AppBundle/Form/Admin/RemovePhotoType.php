@@ -18,7 +18,8 @@ class RemovePhotoType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('delete', CheckboxType::class, ['label' => 'Del',]);
+        $builder
+            ->add('delete', CheckboxType::class, ['label' => false]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

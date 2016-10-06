@@ -35,13 +35,44 @@ class Photo
     private $product;
 
     /**
-     * @var bool
+     * @var boolean
      */
     private $delete;
 
+    /**
+     * @var boolean
+     * @ORM\Column(name="main1", type="boolean")
+     */
+    private $main1;
+
+    /**
+     * @var boolean
+     * @ORM\Column(name="main2", type="boolean")
+     */
+    private $main2;
+
+    /**
+     * Photo constructor.
+     */
     public function __construct()
     {
-        
+        $this->setDelete(false);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isDelete()
+    {
+        return $this->delete;
+    }
+
+    /**
+     * @param boolean $delete
+     */
+    public function setDelete($delete)
+    {
+        $this->delete = $delete;
     }
 
     /**
@@ -99,4 +130,5 @@ class Photo
     {
         return $this->product;
     }
+
 }

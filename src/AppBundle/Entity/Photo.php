@@ -39,6 +39,12 @@ class Photo
      */
     private $delete;
 
+
+    /**
+     * @var string
+     */
+    private $thumbPath;
+
     /**
      * Photo constructor.
      */
@@ -117,6 +123,27 @@ class Photo
     public function getProduct()
     {
         return $this->product;
+    }
+
+    public function getPath()
+    {
+        return "img/Products/".$this->getProduct()->getId()."/".$this->getName();
+    }
+
+    /**
+     * @return string
+     */
+    public function getThumbPath()
+    {
+        return $this->thumbPath;
+    }
+
+    /**
+     * @param string $thumbPath
+     */
+    public function setThumbPath($thumbPath)
+    {
+        $this->thumbPath = $thumbPath;
     }
 
 }

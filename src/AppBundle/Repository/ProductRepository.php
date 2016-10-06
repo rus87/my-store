@@ -5,6 +5,7 @@ namespace AppBundle\Repository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\Category;
 
 /**
  * ProductRepository
@@ -14,6 +15,9 @@ use AppBundle\Entity\Product;
  */
 class ProductRepository extends EntityRepository
 {
+    const PRODUCTS_CLASSES = ['Jacket', 'Sweater', 'Trousers', 'Blouse'];
+
+
     /**
      * Finds products by gender and category
      *
@@ -26,23 +30,123 @@ class ProductRepository extends EntityRepository
     public function findProductsByGenderAndCategory($gender, $category, $limit = null, $offset = null)
     {
         $em = $this->getEntityManager();
-        $query = $em->createQuery(
-            "SELECT p FROM AppBundle\Entity\Product p JOIN p.category c WHERE p.gender = :gend AND c.name = :cat");
+        $className = $em->getRepository('AppBundle:Category')->getProductsClassName($category);
+        dump($category = $em->getRepository('AppBundle:Category')->findOneBy(['name' => $category]));
+        dump($nestedCategories = $em->getRepository('AppBundle:Category')->getAllChildren($category));
+
+        $q = "SELECT p FROM AppBundle\Entity\Products\\".ucfirst($className)." p JOIN p.category c WHERE p.gender = :gend AND (c.name = :cat";
+        foreach($nestedCategories as $cat)
+            $q = $q." OR c.name = :".$cat->getName();
+        $q = $q.")";
+        $query = $em->createQuery($q);
         $query->setParameter('gend', $gender);
-        $query->setParameter('cat', $category);
+        $query->setParameter('cat', $category->getName());
+        foreach($nestedCategories as $category)
+            $query->setParameter($category->getName(), $category->getName());
         if($limit) $query->setMaxResults($limit);
         if($offset) $query->setFirstResult($offset);
         return $query->getResult();
     }
 
-    public function countProductsByGenderAndCategory($gender, $category)
+    public function countProductsByGenderAndCategory($gender, $categoryName)
     {
         $em = $this->getEntityManager();
-        $query = $em->createQuery(
-            "SELECT COUNT(p.id) FROM AppBundle\Entity\Product p
-             JOIN p.category c WHERE p.gender = :gend AND c.name = :cat");
+        $className = $em->getRepository('AppBundle:Category')->getProductsClassName($categoryName);
+        $category = $em->getRepository('AppBundle:Category')->findOneBy(['name' => $categoryName]);
+
+        $innerCats = $em->getRepository('AppBundle:Category')->getAllChildren($category);
+        $q = "SELECT COUNT(p.id) FROM AppBundle\Entity\Products\\".$className." p
+             JOIN p.category c WHERE p.gender = :gend AND (c.name = :cat";
+        foreach($innerCats as $cat)
+            $q = $q." OR c.name = :".$cat->getName();
+        $q = $q.")";
+        $query = $em->createQuery($q);
+        foreach($innerCats as $cat)
+            $query->setParameter($cat->getName(), $cat->getName());
         $query->setParameter('gend', $gender);
-        $query->setParameter('cat', $category);
+        $query->setParameter('cat', $categoryName);
         return $query->getSingleScalarResult();
+    }
+
+    public function countProductsByGender($gender)
+    {
+        $productsCount = 0;
+        $em = $this->getEntityManager();
+        foreach(ProductRepository::PRODUCTS_CLASSES as $className){
+            $query = $em->createQuery('SELECT COUNT(p.id) FROM AppBundle\Entity\Products\\'.$className.' p WHERE p.gender = :gend');
+            $query->setParameter('gend', $gender);
+            $productsCount += $query->getSingleScalarResult();
+        }
+        return $productsCount;
+    }
+
+    public function countProductsByCategory($categoryName)
+    {
+        $productsCount = 0;
+        $em = $this->getEntityManager();
+        foreach(ProductRepository::PRODUCTS_CLASSES as $className){
+            $query = $em->createQuery('SELECT COUNT(p.id) FROM AppBundle\Entity\Products\\'.$className.' p JOIN p.category c WHERE c.name = :cat');
+            $query->setParameter('cat', $categoryName);
+            $productsCount += $query->getSingleScalarResult();
+        }
+        return $productsCount;
+    }
+
+    /**
+     * @param Category $category
+     * @param null string $gender
+     * @return mixed
+     */
+    public function getRandom(Category $category, $gender = null)
+    {
+        $criteria = ['category' => $category];
+        if($gender){
+            $productsNum = $this->countProductsByGenderAndCategory($gender, $category->getName());
+            $criteria['gender'] = $gender;
+        }
+        else
+            $productsNum = $this->getEntityManager()->getRepository("AppBundle:Category")->countProducts($category);
+        $product = $this->getEntityManager()->getRepository("AppBundle:Product")->findBy(
+            $criteria, null, 1, rand(0, $productsNum - 1))[0];
+        return $product;
+    }
+
+    /**
+     * @param integer $id
+     * @return null|object
+     */
+    public function getById($id)
+    {
+        $product = null;
+        foreach(ProductRepository::PRODUCTS_CLASSES as $className){
+            $product = $this->getEntityManager()->getRepository('AppBundle:Products\\'.$className)->find($id);
+            if($product) break;
+        }
+        return $product;
+    }
+
+    /**
+     * @param string $gender
+     * @return array
+     */
+    public function getByGender($gender, $orderBy = null, $limit = null, $offset = null)
+    {
+        $products = [];
+        foreach(ProductRepository::PRODUCTS_CLASSES as $className)
+            $products = array_merge($products,
+                $this->getEntityManager()->getRepository('AppBundle:Products\\'.$className)->findBy(
+                    ['gender' => $gender], null, $limit, $offset));
+        return $products;
+    }
+
+    public function getByCategory($category, $orderBy = null, $limit = null, $offset = null)
+    {
+        $catRepo = $this->getEntityManager()->getRepository('AppBundle:Category');
+        if(! $category instanceof Category)
+            if(gettype($category) == "string")
+                $category = $catRepo->findOneBy(['name' => $category]);
+        $productsClassName = $catRepo->getProductsClassName($category);
+        $prodRepo = $this->getEntityManager()->getRepository('AppBundle:Products\\'.$productsClassName);
+        return $prodRepo->findBy(['category' => $category->getId()], $orderBy, $limit, $offset);
     }
 }

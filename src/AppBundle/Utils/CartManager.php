@@ -9,6 +9,8 @@ use Doctrine\ORM\EntityManager;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Cart;
 
+
+
 class CartManager
 {
     private $em;
@@ -20,43 +22,38 @@ class CartManager
         $this->requestStack = $requestStack;
     }
 
-    public function putProduct()
+    public function removeProduct($productId)
     {
-
-    }
-
-    public function getProducts()
-    {
+        $product = $this->em->getRepository("AppBundle:Product")->findOneById($productId);
+        if (!$product)
+            throw $this->createNotFoundException('Нет продукта с идом '.$productId);
         $clientCartHash = $this->getClientCartHash();
         $cart = $this->em->getRepository("AppBundle:Cart")->findOneBy(["hash" => $clientCartHash]);
-        is_object($cart) ? $products = $cart->getProducts() : $products = NULL;
-        return $products;
+        $cart->removeProduct($product);
+        $this->em->flush();
+    }
+
+    public function getCartProducts()
+    {
+        return $this->getCart()->getProducts();
     }
 
     public function pullProduct(Product $product)
     {
-
-        $clientCartHash = $this->getClientCartHash();
-        if($clientCartHash)
+        if(! $product->isReserved())
         {
-            $cart = $this->em->getRepository("AppBundle:Cart")->findOneBy(["hash" => $clientCartHash]);
+            $cart = $this->getCart();
             $cart->addProduct($product);
             $this->em->persist($cart);
             $this->em->flush();
         }
-        else{
-            $newCart = $this->createCart();
-            $newCart->addProduct($product);
-            $this->em->flush();
-        }
-
     }
 
     private function createCart()
     {
         $cart = new Cart();
         $cart->setHash(md5(uniqid()));
-        $cookie = new Cookie("cartHash", $cart->getHash());
+        $cookie = new Cookie("cartHash", $cart->getHash(), new \DateTime("01-01-2020"));
         $response = new Response();
         $response->headers->setCookie($cookie);
         $response->send();
@@ -72,4 +69,29 @@ class CartManager
         return $request->cookies->get("cartHash");
     }
 
+    /**
+     * @return Cart
+     */
+    public function getCart()
+    {
+        $clientCartHash = $this->getClientCartHash();
+        $cart = $this->em->getRepository("AppBundle:Cart")->findOneBy(["hash" => $clientCartHash]);
+        if($cart == null){
+            $cart = $this->createCart();
+            $this->em->persist($cart);
+            $this->em->flush();
+        }
+        return $cart;
+    }
+
+    /**
+     * @return Cart
+     */
+    public function clearCart()
+    {
+        $cart = $this->getCart();
+        foreach($cart->getProducts() as $cartProduct)
+            $cart->removeProduct($cartProduct);
+        return $cart;
+    }
 }

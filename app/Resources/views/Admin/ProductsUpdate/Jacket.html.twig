@@ -1,0 +1,39 @@
+{% extends "Admin/ProductUpdate.html.twig" %}
+
+{% block child_content %}
+    <div class="container">
+        <div class="col-xs-6">
+            {% block common_text_fields %}
+                {{ parent() }}
+                <div class="form-group">
+                    {{ form_label(form.sleeveLength) }}
+                    {{ form_errors(form.sleeveLength) }}
+                    {{ form_widget(form.sleeveLength, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.filling) }}
+                    {{ form_errors(form.filling) }}
+                    {{ form_widget(form.filling, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.outerMaterial) }}
+                    {{ form_errors(form.outerMaterial) }}
+                    {{ form_widget(form.outerMaterial, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.seasonality) }}
+                    {{ form_errors(form.seasonality) }}
+                    {{ form_widget(form.seasonality, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            {% endblock %}
+        </div>
+        <div class="col-xs-6">
+            {% block photos_and_rest %}
+                {{ parent() }}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}

@@ -8,9 +8,14 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
-    cartManager:
+
+    cart_manager:
         class: AppBundle\Utils\CartManager
         arguments: ['@doctrine.orm.entity_manager', '@request_stack']
+
+    currency_manager:
+            class: AppBundle\Utils\CurrencyManager
+            arguments: ['@doctrine.orm.entity_manager', '@request_stack']
 
     app.product_paginator:
         class: AppBundle\Utils\Paginator

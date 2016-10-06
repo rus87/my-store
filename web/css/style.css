@@ -431,6 +431,7 @@ label {font-weight: 400;}
     float: right;
     margin: 11px 0 0;
     position: relative;
+    display: none;
 }
 .header-r-cart > li {
     overflow: hidden;
@@ -511,7 +512,7 @@ ul.header-r-cart li:hover .mini-cart-content {
     width: auto;
 }
 a.edit-product {
-    background: rgba(0, 0, 0, 0) url("img/icon/edit.png") no-repeat scroll 0 3px;
+    background: rgba(0, 0, 0, 0) url("../img/icon/edit.png") no-repeat scroll 0 3px;
     cursor: pointer;
     display: inline-block;
     font-size: 0;
@@ -525,7 +526,7 @@ a.edit-product {
     width: 20px;
 }
 a.remove-product {
-    background: rgba(0, 0, 0, 0) url("img/icon/remove.png") no-repeat scroll 0 0;
+    background: rgba(0, 0, 0, 0) url("../img/icon/remove.png") no-repeat scroll 0 0;
     cursor: pointer;
     display: inline-block;
     font-size: 0;
@@ -1854,16 +1855,16 @@ form#search-form-four:hover #search-input-four {
     width: 45px;
 }
 .shop-tab a.grid-view {
-    background: url(img/icon/grid.png) no-repeat scroll 0 0;
+    background: url(../img/icon/grid.png) no-repeat scroll 0 0;
 }
 .shop-view a.active.list-view, .shop-view a.list-view:hover {
-    background: rgba(0, 0, 0, 0) url("img/icon/list-hover.png") no-repeat scroll 0 0;
+    background: rgba(0, 0, 0, 0) url("../img/icon/list-hover.png") no-repeat scroll 0 0;
 }
 .shop-view a.active.grid-view, .shop-view a.grid-view:hover {
-    background: url(img/icon/grid-hover.png) no-repeat scroll 0 0;
+    background: url(../img/icon/grid-hover.png) no-repeat scroll 0 0;
 }
 .shop-tab li a.grid-view:hover:after, .shop-tab li.active a.grid-view:after, .shop-tab li a.list-view:hover:after, .shop-tab li.active a.list-view:after {
-    background: url(img/icon/grid-hover.png) no-repeat scroll 0 0;
+    background: url(../img/icon/grid-hover.png) no-repeat scroll 0 0;
     height: 27px;
     width: 27px;
     position: absolute;
@@ -1872,7 +1873,7 @@ form#search-form-four:hover #search-input-four {
     left: 0; 
 }
 .shop-tab li a.list-view:hover:after, .shop-tab li.active a.list-view:after {
-    background: url(img/icon/list-hover.png) no-repeat scroll 0 0;
+    background: url(../img/icon/list-hover.png) no-repeat scroll 0 0;
     height: 27px;
     width: 27px;
     position: absolute;
@@ -2407,7 +2408,7 @@ span.required {
     width: 3em;
 }
 .cart-main-area .cart-table .p-action > a, .wishlist-concept .p-action > a {
-    background: rgba(0, 0, 0, 0) url("img/icon/delete.png") no-repeat scroll 0 0;
+    background: rgba(0, 0, 0, 0) url("../img/icon/delete.png") no-repeat scroll 0 0;
     display: block;
     font-size: 0;
     height: 10px;
@@ -2678,7 +2679,7 @@ h3.login-title {
     border: 1px solid #f2f2f2;
     margin-bottom: 20px
 }
-.login-form input {
+.login-form, .form input {
     border: 1px solid #f2f2f2;
     clear: both;
     display: block;
@@ -2697,7 +2698,7 @@ h3.login-title {
     margin-bottom: 0;
     padding-bottom: 5px;
 }
-.login-form p span {
+.login-form p span, .form p span {
     color: #eb340a;
     padding-left: 2px;
 }
@@ -2804,6 +2805,7 @@ h3.login-title {
 .checkout-table tbody td {padding: 10px}
 .checkout-table tfoot td {padding: 2px 10px}
 .checkout-table tfoot tr:first-child, .checkout-table tfoot tr:last-child {font-size: 16px}
+.checkout-table {white-space:nowrap}
 .checkout-buttons {
     border: 1px solid #d9dde3;
     margin-right: 1px;
@@ -3868,3 +3870,8 @@ h3.widget-title-modal {
     z-index: 9999;
 }
 #scrollUp:hover {background: #e03550 none repeat scroll 0 0}
+
+.form-error
+{
+    color: red;
+}

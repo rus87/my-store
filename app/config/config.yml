@@ -10,6 +10,17 @@ parameters:
     photo_folder: '%kernel.root_dir%/../web/img/Products'
     photo_folder_asset: '/img/Products'
 
+services:
+    twig.extension.intl:
+        class: Twig_Extensions_Extension_Intl
+        tags:
+            - { name: twig.extension }
+    twig.extension.i18n:
+            class: Twig_Extensions_Extension_I18n
+            tags:
+                - { name: twig.extension }
+
+
 framework:
     #esi:             ~
     #translator:      { fallbacks: ["%locale%"] }
@@ -33,11 +44,15 @@ framework:
     fragments:       ~
     http_method_override: true
     assets: ~
+    #translator:
+    #        paths: ['%kernel.root_dir%/Resources/translations']
 
 # Twig Configuration
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    globals:
+        photos_directory: "%photo_folder_asset%"
 
 # Doctrine Configuration
 doctrine:
@@ -116,3 +131,24 @@ liip_imagine:
             quality: 75
             filters:
                 thumbnail: { size: [200, 200], mode: inset }
+
+        cart_thumb:
+            quality: 76
+            filters:
+                thumbnail: { size: [70, 95], mode: outlet}
+
+        mini_cart_thumb:
+            quality: 76
+            filters:
+                thumbnail: { size: [70, 70], mode: outlet}
+
+        shop_main_thumb:
+            quality: 76
+            filters:
+                thumbnail: { size: [540, 728], mode: outlet}
+
+        related_preview_thumb:
+            quality: 76
+            filters:
+                thumbnail: { size: [80, 100], mode: outlet}
+

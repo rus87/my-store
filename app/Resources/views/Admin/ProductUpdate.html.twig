@@ -2,28 +2,105 @@
 
 {% block child_content %}
     <div class="container">
-        {{ form_start(form) }}
-        {{ form_errors(form) }}
-        {{ form_row(form.title) }}
-        {{ form_row(form.price) }}
-        {{ form_row(form.description) }}
-        {{ form_row(form.gender) }}
-        {{ form_row(form.season) }}
-        {{ form_row(form.category) }}
+        <div class="col-xs-6">
+            {% block common_text_fields %}
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                <div class="form-group">
+                    {{ form_label(form.title) }}
+                    {{ form_errors(form.title) }}
+                    {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+                </div>
 
-        <table>
-            {% for i in 0..form.photos|length-1 %}
-                <tr>
-                    <td><img src="{{ asset(photos[i])|imagine_filter('my_thumb') }}"></td>
-                    <td>{{ form_row(form.photos[i].delete) }}</td>
-                </tr>
-            {% endfor %}
-        </table>
+                <div class="form-group">
+                    {{ form_label(form.price) }}
+                    {{ form_errors(form.price) }}
+                    {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+                </div>
 
+                <div class="form-group">
+                    {{ form_label(form.brand) }}
+                    {{ form_errors(form.brand) }}
+                    {{ form_widget(form.brand, {'attr': {'class': 'form-control'}}) }}
+                </div>
 
+                <div class="form-group">
+                    {{ form_label(form.description) }}
+                    {{ form_errors(form.description) }}
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                </div>
 
-        {{ form_widget(form._token) }}
-        <input type="submit" value="Update">
-        </form>
+                <div class="form-group">
+                    {{ form_label(form.gender) }}
+                    {{ form_errors(form.gender) }}
+                    {{ form_widget(form.gender, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.category) }}
+                    {{ form_errors(form.category) }}
+                    {{ form_widget(form.category, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            {% endblock %}
+        </div>
+        <div class="col-xs-6">
+            {% block photos_and_rest %}
+                <div class="form-group col-xs-6">
+                    {{ form_errors(form.mainPhoto1) }}
+                    {{ form_widget(form.mainPhoto1) }}
+                    {% if product.mainPhoto1 != null %}
+                        <div>
+                            <img src="{{ (photos_directory ~ '/' ~ product.id ~ '/' ~ product.mainPhoto1.name)|imagine_filter('my_thumb') }}">
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group col-xs-6">
+                    {{ form_errors(form.mainPhoto2) }}
+                    {{ form_widget(form.mainPhoto2) }}
+                    {% if product.mainPhoto2 != null %}
+                        <div>
+                            <img src="{{ (photos_directory ~ '/' ~ product.id ~ '/' ~ product.mainPhoto2.name)|imagine_filter('my_thumb') }}">
+                        </div>
+                    {% endif %}
+                </div>
+
+                <table class="table table-hover">
+                    <caption>Other photos</caption>
+                    <thead>
+                    <tr>
+                        <td>Photo</td>
+                        <td>Delete</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if product.photos is not empty %}
+                        {% for i in 0..product.photos|length-1 %}
+                            {% if product.mainPhoto1 != product.photos[i] and product.mainPhoto2 != product.photos[i] %}
+                                <tr>
+                                    <td><img src="{{ (photos_directory ~ "/" ~ product.id ~ "/" ~ product.photos[i].name)|imagine_filter('my_thumb') }}"></td>
+                                    <td>{{ form_row(form.photos[i].delete) }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    </tbody>
+                </table>
+
+                <div class="form-group">
+                    {{ form_errors(form.newPhoto) }}
+                    {{ form_widget(form.newPhoto) }}
+                </div>
+
+                {{ form_widget(form._token) }}
+                <input type="submit" class="btn btn-primary" value="Update">
+                </form>
+            {% endblock %}
+        </div>
     </div>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script src="{{ asset("js/ProductAdd/AddRemovePhotoFields.js") }}" type="text/javascript"></script>
 {% endblock %}

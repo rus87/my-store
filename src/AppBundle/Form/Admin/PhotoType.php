@@ -7,7 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Image;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 
 class PhotoType extends AbstractType
 {
@@ -15,15 +15,25 @@ class PhotoType extends AbstractType
     {
         $imageConstraints = ['mimeTypes' => ['image/jpeg', 'image/jpg']];
         $image = new Image($imageConstraints);
-            $builder->add('name', FileType::class, ['label' => 'Photo', 'required' => true, 'constraints' => $image]);
-
+            $builder
+                ->add('name', FileType::class,
+                [
+                    'label' => $options['label'],
+                    'required' => true,
+                    'constraints' => $image,
+                    'attr' => ['class' => 'form-control']
+                ]);
+                if($options['mode'] == 'add')
+                    $builder->add('Del', ButtonType::class, ['attr' => ['class' => 'del_input btn btn-default']]);
+                //elseif($options['mode'] == 'update')
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'AppBundle\Entity\Photo',
-            'mode' => 'add'
+            'mode' => 'add',
+            'label' => false
         ));
     }
 

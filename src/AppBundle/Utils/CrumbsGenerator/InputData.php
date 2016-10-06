@@ -5,6 +5,9 @@ namespace AppBundle\Utils\CrumbsGenerator;
 
 class InputData
 {
+    /**
+     * @var string
+     */
     private $routeName;
     private $routeParams = [];
     private $mark;

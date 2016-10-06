@@ -1,0 +1,226 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Shipping
+ *
+ * @ORM\Table(name="shipping")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ShippingRepository")
+ */
+class Shipping
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="company", type="string", length=50)
+     */
+    private $company;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="storageNum", type="integer")
+     */
+    private $storageNum;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="city", type="string", length=50)
+     */
+    private $city;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="storageAddress", type="string", length=50, nullable=true)
+     */
+    private $storageAddress;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="clientTel", type="string", length=15)
+     */
+    private $clientTel;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="clientFio", type="string", length=50)
+     */
+    private $clientFio;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Booking", mappedBy="shipping", cascade={}, fetch="EAGER")
+     */
+    private $bookings;
+
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set company
+     *
+     * @param string $company
+     *
+     * @return Shipping
+     */
+    public function setCompany($company)
+    {
+        $this->company = $company;
+
+        return $this;
+    }
+
+    /**
+     * Get company
+     *
+     * @return string
+     */
+    public function getCompany()
+    {
+        return $this->company;
+    }
+
+    /**
+     * Set storageNum
+     *
+     * @param integer $storageNum
+     *
+     * @return Shipping
+     */
+    public function setStorageNum($storageNum)
+    {
+        $this->storageNum = $storageNum;
+
+        return $this;
+    }
+
+    /**
+     * Get storageNum
+     *
+     * @return int
+     */
+    public function getStorageNum()
+    {
+        return $this->storageNum;
+    }
+
+    /**
+     * Set city
+     *
+     * @param string $city
+     *
+     * @return Shipping
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    /**
+     * Get city
+     *
+     * @return string
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * Set storageAddress
+     *
+     * @param string $storageAddress
+     *
+     * @return Shipping
+     */
+    public function setStorageAddress($storageAddress)
+    {
+        $this->storageAddress = $storageAddress;
+
+        return $this;
+    }
+
+    /**
+     * Get storageAddress
+     *
+     * @return string
+     */
+    public function getStorageAddress()
+    {
+        return $this->storageAddress;
+    }
+
+    /**
+     * Set clientTel
+     *
+     * @param string $clientTel
+     *
+     * @return Shipping
+     */
+    public function setClientTel($clientTel)
+    {
+        $this->clientTel = $clientTel;
+
+        return $this;
+    }
+
+    /**
+     * Get clientTel
+     *
+     * @return string
+     */
+    public function getClientTel()
+    {
+        return $this->clientTel;
+    }
+
+    /**
+     * Set clientFio
+     *
+     * @param string $clientFio
+     *
+     * @return Shipping
+     */
+    public function setClientFio($clientFio)
+    {
+        $this->clientFio = $clientFio;
+
+        return $this;
+    }
+
+    /**
+     * Get clientFio
+     *
+     * @return string
+     */
+    public function getClientFio()
+    {
+        return $this->clientFio;
+    }
+}
+

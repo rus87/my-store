@@ -3,16 +3,26 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\MaxDepth;
+use AppBundle\Entity\Currency;
 
 /**
  * Product
  *
  * @ORM\Table(name="product")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ProductRepository")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="discr", type="string")
+ * @ORM\DiscriminatorMap({
+ *     "jacket" = "AppBundle\Entity\Products\Jacket",
+ *     "sweater" = "AppBundle\Entity\Products\Sweater",
+ *     "trousers" = "AppBundle\Entity\Products\Trousers",
+ *     "blouse" = "AppBundle\Entity\Products\Blouse",})
  */
-class Product
+abstract class Product
 {
     /**
      * @var int
@@ -21,28 +31,34 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
      */
-    private $title;
+    protected $title;
 
     /**
      * @var float
      *
      * @ORM\Column(name="price", type="float")
      */
-    private $price;
+    protected $price;
 
     /**
      * @var string
      *
      * @ORM\Column(name="description", type="text", nullable=true)
      */
-    private $description;
+    protected $description;
+
+    /**
+     * @var string
+     * @ORM\Column(name="brand", type="string", length=50)
+     */
+    protected $brand;
 
     /**
      * @var string
@@ -50,39 +66,79 @@ class Product
      * @ORM\Column(name="gender", type="string", length=10)
      * @Assert\Regex(pattern="(male|female)")
      */
-    private $gender;
+    protected $gender;
 
     /**
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="products", fetch="EAGER")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
      * @Assert\Valid()
+     * @MaxDepth(1)
      */
-    private $category;
+    protected $category;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="season", type="string", length=20)
-     * @Assert\Regex(pattern="(summer|winter|spring|autumn)")
-     */
-    private $season;
 
     /**
      * @ORM\ManyToMany(targetEntity="Cart", mappedBy="products")
+     * @MaxDepth(2)
      */
-    private $carts;
+    protected $carts;
 
 
     /**
      * @ORM\OneToMany(targetEntity="Photo", mappedBy="product", cascade={"persist", "remove"}, fetch="EAGER")
      * @Assert\Valid
      */
-    private $photos;
+    protected $photos;
+
+
+    protected $newPhoto;
+
+
+    /**
+     * @var string
+     */
+    protected $miniCartPhotoPath;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Photo", cascade={"persist", "remove"}, fetch="EAGER")
+     */
+    protected $mainPhoto1;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Photo", cascade={"persist", "remove"}, fetch="EAGER")
+     */
+    protected $mainPhoto2;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Booking", inversedBy="products")
+     */
+    protected $booking;
+
+    /**
+     * @var Currency
+     */
+    protected $currency;
 
     public function __construct()
     {
         $this->carts = new ArrayCollection();
         $this->photos = new ArrayCollection();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNewPhoto()
+    {
+        return $this->newPhoto;
+    }
+
+    /**
+     * @param mixed $newPhoto
+     */
+    public function setNewPhoto($newPhoto)
+    {
+        $this->newPhoto = $newPhoto;
     }
 
     /**
@@ -138,8 +194,11 @@ class Product
      */
     public function getPrice()
     {
-        return $this->price;
+        if(isset($this->currency))
+            return round($this->price * $this->currency->getRatio(), 2);
+        else return $this->price;
     }
+
 
     /**
      * Set description
@@ -162,6 +221,30 @@ class Product
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set brand
+     *
+     * @param string $brand
+     *
+     * @return Product
+     */
+    public function setBrand($brand)
+    {
+        $this->brand = $brand;
+
+        return $this;
+    }
+
+    /**
+     * Get brand
+     *
+     * @return string
+     */
+    public function getBrand()
+    {
+        return $this->brand;
     }
 
     /**
@@ -202,35 +285,10 @@ class Product
 
     /**
      * Get category
-     *
-     * @return string 
      */
     public function getCategory()
     {
         return $this->category;
-    }
-
-    /**
-     * Set season
-     *
-     * @param string $season
-     * @return Product
-     */
-    public function setSeason($season)
-    {
-        $this->season = $season;
-
-        return $this;
-    }
-
-    /**
-     * Get season
-     *
-     * @return string 
-     */
-    public function getSeason()
-    {
-        return $this->season;
     }
 
     /**
@@ -302,4 +360,157 @@ class Product
     {
         return $this->photos;
     }
+
+
+
+
+    /**
+     * Make all product's photos to reference to this product
+     */
+    public function updatePhotosReferences()
+    {
+        foreach($this->getPhotos() as $photo){
+            $photo->setProduct($this);
+        }
+    }
+
+    /**
+     * Set mainPhoto1
+     *
+     * @param \AppBundle\Entity\Photo $mainPhoto1
+     *
+     * @return Product
+     */
+    public function setMainPhoto1(\AppBundle\Entity\Photo $mainPhoto1 = null)
+    {
+        $this->mainPhoto1 = $mainPhoto1;
+
+        return $this;
+    }
+
+    /**
+     * Get mainPhoto1
+     *
+     * @return \AppBundle\Entity\Photo
+     */
+    public function getMainPhoto1()
+    {
+        return $this->mainPhoto1;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMainPhoto1Path()
+    {
+        $photo = $this->getMainPhoto1();
+        if($photo != null)
+            return 'img/Products/'.$this->getId().'/'.$photo->getName();
+        else return 'img/dummy-product-1.jpg';
+    }
+
+    /**
+     * Set mainPhoto2
+     *
+     * @param \AppBundle\Entity\Photo $mainPhoto2
+     *
+     * @return Product
+     */
+    public function setMainPhoto2(\AppBundle\Entity\Photo $mainPhoto2 = null)
+    {
+        $this->mainPhoto2 = $mainPhoto2;
+
+        return $this;
+    }
+
+    /**
+     * Get mainPhoto2
+     *
+     * @return \AppBundle\Entity\Photo
+     */
+    public function getMainPhoto2()
+    {
+        return $this->mainPhoto2;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMainPhoto2Path()
+    {
+        $photo = $this->getMainPhoto2();
+        if($photo != null)
+            return 'img/Products/'.$this->getId().'/'.$photo->getName();
+        else return 'img/dummy-product-2.jpg';
+    }
+
+    /**
+     * @return string
+     */
+    public function getMiniCartPhotoPath()
+    {
+        return $this->miniCartPhotoPath;
+    }
+
+    /**
+     * @param string $miniCartPhotoPath
+     */
+    public function setMiniCartPhotoPath($miniCartPhotoPath)
+    {
+        $this->miniCartPhotoPath = $miniCartPhotoPath;
+    }
+
+    /**
+     * Set booking
+     *
+     * @param \AppBundle\Entity\Booking $booking
+     *
+     * @return Product
+     */
+    public function setBooking(\AppBundle\Entity\Booking $booking = null)
+    {
+        $this->booking = $booking;
+
+        return $this;
+    }
+
+    /**
+     * Get booking
+     *
+     * @return \AppBundle\Entity\Booking
+     */
+    public function getBooking()
+    {
+        return $this->booking;
+    }
+
+    /**
+     * @return \AppBundle\Entity\Currency
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param \AppBundle\Entity\Currency $currency
+     * @return Product
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+        return $this;
+    }
+
+    public function isReserved()
+    {
+        if($this->booking == null) return false;
+        return true;
+    }
+
+    public function getPhotosDirectory()
+    {
+        return "img/Products/".$this->getId();
+    }
+
 }

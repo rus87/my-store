@@ -1,0 +1,51 @@
+{% extends('Admin/AdminBase.html.twig') %}
+
+{% block child_content %}
+    <div class="container">
+        <div id="login_form">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Вход</h3>
+                </div>
+                <div class="panel-body">
+                    {% if error %}
+                        <div>{{ error.messageKey|trans([], 'security') }}</div>
+                    {% endif %}
+                    <form class="form-horizontal" method="post" action="{{ path('app_security_login') }}">
+
+                        <div class="form-group">
+                            <label for="username" class="control-label col-sm-3">Логин:</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="_username" id="username" class="form-control" placeholder="Введите логин..." value="{{ last_username }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Пароль:</label>
+                            <div class="col-sm-9">
+                                <input type="password" name="_password" class="form-control" placeholder="Введите пароль...">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-5 col-sm-offset-3">
+                                <input type="checkbox" name="_remember_me" checked /> Запомнить меня
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                        <div class="row">
+                            <div class="col-xs-4 col-xs-offset-4">
+                                <button class="btn btn-primary" type="submit">Войти</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+{% endblock %}

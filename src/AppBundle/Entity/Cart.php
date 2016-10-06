@@ -108,4 +108,27 @@ class Cart
     {
         return $this->products;
     }
+
+    /**
+     * @return int
+     */
+    public function getTotal()
+    {
+        $total = 0;
+        $products = $this->getProducts()->getValues();
+        if($products != null)
+            foreach($products as $product)
+                $total += $product->getPrice();
+        return $total;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        if($this->getProducts()->isEmpty())
+            return true;
+        return false;
+    }
 }
