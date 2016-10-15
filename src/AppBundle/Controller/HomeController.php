@@ -10,22 +10,25 @@ use AppBundle\Entity\Products\Jacket;
 use AppBundle\Entity\Category;
 use JMS\Serializer\SerializationContext;
 use AppBundle\Form\CurrencyType;
+use AppBundle\Form\SearchProductsType;
 
 class HomeController extends BaseController
 {
     /**
      * @Route(path="/", options={"expose" : "true"})
      */
-    public function homeAction()
+    public function homeAction(Request $request)
     {
         $categories = $this->getDoctrine()->getManager()->getRepository("AppBundle:Category")->findBy(['parent' => null]);
         $form = $this->createCurrencyForm('app_home_home', []);
-        dump($this->getDoctrine()->getManager()->getRepository("AppBundle:Product")->findProductsByGenderAndCategory('female', 'jacket'));
+        $this->handleSearchForm($request);
+        if($this->searchRedirectResponse) return $this->searchRedirectResponse;
         return $this->render("mybase.html.twig",
             [
                 'categories' => $categories,
                 'currency' => $this->get('currency_manager')->getClientCurrency(),
-                'form' => $form->createView()
+                'form' => $form->createView(),
+                'searchForm' => $this->searchFormView
             ]);
     }
 

@@ -128,26 +128,17 @@
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-8">
                         <div id="search-category">
-                            <form class="search-box" action="#" method="post">
+                            {{ form_start(searchForm, {'attr': {'class': 'search-box'}}) }}
                                 <div class="search-categories">
                                     <div class="search-cat">
-                                        <select class="category-items " name="category">
-                                            <option>All Categories</option>
-                                            <option>Women</option>
-                                            <option>Men</option>
-                                            <option>Jewllery</option>
-                                            <option>Bootees Bags</option>
-                                            <option>Clothing</option>
-                                            <option>Footwear</option>
-                                            <option>T-Shirts</option>
-                                        </select>
+                                        {{ form_widget(searchForm.className, {'attr': {'class': 'category-items '}}) }}
                                     </div>
                                 </div>
-                                <input type="search" placeholder="Search here..." id="text-search" name="search">
+                                {{ form_widget(searchForm.query, {'id': 'text-search', 'attr': {'placeholder': 'Search here...'}}) }}
                                 <button id="btn-search-category" type="submit">
                                     <i class="icon-search"></i>
                                 </button>
-                            </form>
+                            {{ form_end(searchForm) }}
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-4">

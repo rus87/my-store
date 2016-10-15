@@ -7,4 +7,3 @@ function send()
     //alert();
     $('form[name="currency"]').submit();
 }
-

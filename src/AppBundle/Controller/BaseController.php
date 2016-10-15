@@ -9,10 +9,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Currency;
 use AppBundle\Form\CurrencyType;
+use AppBundle\Form\SearchProductsType;
 
 
 class BaseController extends Controller
 {
+
+    protected $searchFormView;
+    protected $searchRedirectResponse;
 
     /**
      * @param Product[] $products
@@ -49,6 +53,11 @@ class BaseController extends Controller
         return $this->redirectToRoute($redirectRoute, $params);
     }
 
+    /**
+     * @param string $redirectRoute
+     * @param array $params
+     * @return \Symfony\Component\Form\Form
+     */
     protected function createCurrencyForm($redirectRoute, $params)
     {
         $currenciesNames = [];
@@ -65,6 +74,27 @@ class BaseController extends Controller
             ]);
 
         return $form;
+    }
+
+    /**
+     * @return mixed
+     * @param Request
+     *
+     */
+    protected function handleSearchForm(Request $request, $formData = null)
+    {
+        $searchCats = $this->getDoctrine()->getManager()->getRepository('AppBundle:Category')->findBy(['parent' => null]);
+        foreach($searchCats as $cat)
+            $choices[$cat->getDisplayedName()] = $cat->getName();
+        $form = $this->createForm(SearchProductsType::class, $formData, ['choices' => $choices]);
+        $form->handleRequest($request);
+        if($form->isValid()){
+            $search = $form['query']->getData();
+            $className = $form['className']->getData();
+            $this->searchRedirectResponse =
+                $this->redirectToRoute('app_products_showsearchresults', ['q' => $search, 'type' => $className]);
+        }
+        else $this->searchFormView = $form->createView();
     }
 
 }

@@ -40,6 +40,7 @@ class ProductController extends BaseController
         $crumbsData[] = new InputData('app_product_show', null, $product->getTitle());
         dump($crumbs = $this->get('app.crumbs_generator')->make($crumbsData));
         $templateData['form'] = $this->createCurrencyForm('app_product_show', ['id' => $id])->createView();
+        $templateData['searchForm'] = $this->createSearchForm()->createView();
         $templateData['currency'] = $currency;
         $this->setProductsCurrency([$product], $currency);
         $templateData['product'] = $product;

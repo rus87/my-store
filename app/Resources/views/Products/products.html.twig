@@ -1,17 +1,22 @@
 {% extends "mybase.html.twig" %}
 {% block child_content %}
-{% include 'breadcrumbs.html.twig' with {"crumbs": crumbs} %}
-    <!--Banner Image Area Start-->
-    <div class="banner-image-area">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="category-image"><img alt="women" src="{{ asset('img/banner/13.jpg') }}"></div>
+    {% block crumbs %}
+        {% include 'breadcrumbs.html.twig' with {"crumbs": crumbs} %}
+    {% endblock %}
+    {% block banner %}
+        <!--Banner Image Area Start-->
+        <div class="banner-image-area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="category-image"><img alt="women" src="{{ asset('img/banner/13.jpg') }}"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!--End of Banner Image Area-->
+        <!--End of Banner Image Area-->
+    {% endblock %}
+    {% block main_area %}
     <!--Shop Main Area Start-->
     <div class="shop-main-area">
         <div class="container">
@@ -103,16 +108,12 @@
                             <!-- Nav tabs -->
                             <div class="filter-by">
                                 <h4>Order by </h4>
-                                <form action="#">
+                                {{ form_start(orderByForm) }}
                                     <div class="select-filter">
-                                        <select>
-                                            <option value="color">Price ASC</option>
-                                            <option value="color">Price DESC</option>
-                                            <option value="name">Title ASC</option>
-                                            <option value="name">Title DESC</option>
-                                        </select>
+                                        {{ form_widget(orderByForm.orderBy) }}
+                                        {{ form_widget(orderByForm.params) }}
                                     </div>
-                                </form>
+                                {{ form_end(orderByForm) }}
                             </div>
                             <p class="page floatright">Per Page</p>
                             <div class="filter-by floatright">
@@ -196,33 +197,36 @@
                             </div>
                         </div>
                     </div>
-                    {% if numPages > 1 %}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="pagination-content">
-                                    <div class="pagination-button">
-                                        <ul class="pagination">
-                                            <li><a href="{{ paginationLinkPath }}"><i class="fa fa-caret-left"></i></a></li>
-                                            {% for i in 1..numPages  %}
-                                                {% if page == loop.index %}
-                                                    <li class="current"><a href="">{{ i }}</a></li>
-                                                {% else %}
-                                                    <li><a href="{{ paginationLinkPath ~ '/' ~ i }}">{{ i }}</a></li>
-                                                {% endif %}
-                                            {% endfor %}
-                                            <li><a href="{{ paginationLinkPath ~ '/' ~ numPages }}"><i class="fa fa-caret-right"></i></a></li>
-                                        </ul>
-                                        <span><strong>Page: </strong></span>
+                    {% block pagination %}
+                        {% if numPages > 1 %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="pagination-content">
+                                        <div class="pagination-button">
+                                            <ul class="pagination">
+                                                <li><a href="{{ pagesLinks|first }}"><i class="fa fa-caret-left"></i></a></li>
+                                                {% for link in pagesLinks %}
+                                                    {% if loop.index == page %}
+                                                    <li class="current"><a href="{{ link }}">{{ loop.index }}</a> </li>
+                                                    {% else %}
+                                                        <li><a href="{{ link }}">{{ loop.index }}</a> </li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <li><a href="{{ pagesLinks|last }}"><i class="fa fa-caret-right"></i></a></li>
+                                            </ul>
+                                            <span><strong>Page: </strong></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endif %}
+                        {% endif %}
+                    {% endblock %}
                 </div>
             </div>
         </div>
     </div>
     <!--End of Shop Main Area-->
+    {% endblock %}
     <!--Quickview Product Start -->
     <div id="quickview-wrapper">
         <!-- Modal -->
@@ -281,4 +285,5 @@
 {% block js %}
     {{ parent() }}
     <script src="{{ asset("js/Products/QuickView.js") }}" type="text/javascript"></script>
+    <script src="{{ asset("js/Products/OrderBy.js") }}" type="text/javascript"></script>
 {% endblock %}

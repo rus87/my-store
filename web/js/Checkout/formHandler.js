@@ -7,7 +7,6 @@ $(document).ready(function(){
 function send_form(){
 
     var form_data = $('#checkout_form').serialize();
-    alert();
 
      $.ajax({
          type: 'POST',

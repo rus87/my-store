@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Category;
+use Doctrine\ORM\Query;
 
 /**
  * ProductRepository
@@ -17,7 +18,6 @@ class ProductRepository extends EntityRepository
 {
     const PRODUCTS_CLASSES = ['Jacket', 'Sweater', 'Trousers', 'Blouse'];
 
-
     /**
      * Finds products by gender and category
      *
@@ -27,17 +27,18 @@ class ProductRepository extends EntityRepository
      * @param int $offset
      * @return array The objects
      */
-    public function findProductsByGenderAndCategory($gender, $category, $limit = null, $offset = null)
+    public function findProductsByGenderAndCategory($gender, $category, $orderBy = 'id:ASC', $limit = null, $offset = null)
     {
         $em = $this->getEntityManager();
         $className = $em->getRepository('AppBundle:Category')->getProductsClassName($category);
         dump($category = $em->getRepository('AppBundle:Category')->findOneBy(['name' => $category]));
         dump($nestedCategories = $em->getRepository('AppBundle:Category')->getAllChildren($category));
-
+        $orderByDirection = explode(':', $orderBy)[1];
+        $orderByProperty = explode(':', $orderBy)[0];
         $q = "SELECT p FROM AppBundle\Entity\Products\\".ucfirst($className)." p JOIN p.category c WHERE p.gender = :gend AND (c.name = :cat";
         foreach($nestedCategories as $cat)
             $q = $q." OR c.name = :".$cat->getName();
-        $q = $q.")";
+        $q = $q.") ORDER BY p.$orderByProperty $orderByDirection";
         $query = $em->createQuery($q);
         $query->setParameter('gend', $gender);
         $query->setParameter('cat', $category->getName());
@@ -148,5 +149,33 @@ class ProductRepository extends EntityRepository
         $productsClassName = $catRepo->getProductsClassName($category);
         $prodRepo = $this->getEntityManager()->getRepository('AppBundle:Products\\'.$productsClassName);
         return $prodRepo->findBy(['category' => $category->getId()], $orderBy, $limit, $offset);
+    }
+
+    public function search($search, $productClassName, $orderBy = 'id:ASC', $limit = null, $offset = null)
+    {
+        $em = $this->getEntityManager();
+        $orderByDirection = explode(':', $orderBy)[1];
+        $orderByProperty = explode(':', $orderBy)[0];
+        $q = "SELECT p FROM AppBundle\Entity\Products\\".ucfirst($productClassName)." p
+              WHERE p.title LIKE :search OR p.description LIKE :search
+              ORDER BY p.$orderByProperty $orderByDirection";
+        $query = $em->createQuery($q);
+
+        $search = "%".$search."%";
+        $query->setParameter('search', $search);
+        $query->setMaxResults($limit);
+        $query->setFirstResult($offset);
+        return $query->getResult();
+    }
+
+    public function countSearch($search, $productClassName)
+    {
+        $em = $this->getEntityManager();
+        $q = "SELECT COUNT(p.id) FROM AppBundle\Entity\Products\\".ucfirst($productClassName)." p
+              WHERE p.title LIKE :search OR p.description LIKE :search";
+        $query = $em->createQuery($q);
+        $search = "%".$search."%";
+        $query->setParameter('search', $search);
+        return $query->getSingleScalarResult();
     }
 }

@@ -26,6 +26,7 @@ class CheckoutController extends BaseController
         $checkoutForm = $this->createForm(BookingType::class, new Booking(), ['attr' => ['id' => 'checkout_form', 'onSubmit' => 'send_form()']]);
         $templateData = [
             'checkoutForm' => $checkoutForm->createView(),
+            'searchForm' => $this->createSearchForm()->createView(),
             'cart' => $cart,
             'form' => $this->createCurrencyForm('app_checkout_index', [])->createView(),
             'categories' => $em->getRepository('AppBundle:Category')->findBy(['parent' => null]),

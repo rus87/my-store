@@ -19,7 +19,7 @@ services:
 
     app.product_paginator:
         class: AppBundle\Utils\Paginator
-        arguments: ['@doctrine.orm.entity_manager']
+        arguments: ['@doctrine.orm.entity_manager', '@request_stack', '@router']
 
     my_event.listener:
         class: AppBundle\EventListener\MyEventListener

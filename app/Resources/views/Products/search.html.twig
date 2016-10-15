@@ -1,0 +1,16 @@
+{% extends 'Products/products.html.twig' %}
+{% block child_content %}
+
+    {% block crumbs %}
+        {{ parent() }}
+    {% endblock %}
+
+    {% block banner %}
+        {{ parent() }}
+    {% endblock %}
+
+    {% block main_area %}
+        {{ parent() }}
+    {% endblock %}
+
+{% endblock %}

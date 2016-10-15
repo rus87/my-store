@@ -51,6 +51,10 @@ class CrumbsGenerator
                     $crumb->setMark(ucfirst($item->getMark()));
                     $crumbs []= $crumb;
                     break;
+
+                case 'app_products_showsearchresults':
+                    $crumb->setMark(ucfirst($item->getMark()));
+                    $crumbs []= $crumb;
             }
         }
         $crumbs[count($crumbs) - 1]->setIsLast(true);
