@@ -11,11 +11,9 @@ use AppBundle\Entity\Currency;
 use AppBundle\Form\CurrencyType;
 use AppBundle\Form\SearchProductsType;
 
-
 class BaseController extends Controller
 {
 
-    protected $searchFormView;
     protected $searchRedirectResponse;
 
     /**
@@ -94,7 +92,8 @@ class BaseController extends Controller
             $this->searchRedirectResponse =
                 $this->redirectToRoute('app_products_showsearchresults', ['q' => $search, 'type' => $className]);
         }
-        else $this->searchFormView = $form->createView();
+        else return $form->createView();
     }
+
 
 }

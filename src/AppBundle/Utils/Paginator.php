@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use AppBundle\Entity\Category;
 
 class Paginator
 {
@@ -20,6 +21,30 @@ class Paginator
         $this->em = $em;
         $this->requestStack = $requestStack;
         $this->router = $router;
+    }
+
+    public function countPagesByCategory($categoryName)
+    {
+        $productsCount = $this->em->getRepository("AppBundle:Product")->countProductsByCategory($categoryName);
+        dump($productsCount);
+        return (int)ceil($productsCount / Paginator::PRODUCTS_PER_PAGE);
+    }
+
+    public function getPageByCategory($category, $orderBy, $page)
+    {
+        $catsRepo = $this->em->getRepository('AppBundle:Category');
+        $prodsRepo = $this->em->getRepository('AppBundle:Product');
+        $orderByProperty = explode(':', $orderBy)[0];
+        $orderByDirection = explode(':', $orderBy)[1];
+        if(! $category instanceof Category)
+            if(gettype($category) == "string")
+                $category = $catsRepo->findOneBy(['name' => $category]);
+        $offset = Paginator::PRODUCTS_PER_PAGE * ($page - 1);
+        return $prodsRepo->findBy(
+            ['category' => $category->getId()],
+            [$orderByProperty => $orderByDirection],
+            Paginator::PRODUCTS_PER_PAGE,
+            $offset);
     }
 
     public function countSearchPages($search, $productClassName)
@@ -54,6 +79,17 @@ class Paginator
         {
             $links[] = $this->router
                 ->generate('app_products_showbygenderandcategory', ['page' => $i, 'gender' => $gender, 'category' => $category]);
+        }
+        return $links;
+    }
+
+    public function makeCategoryPagesLinks($numPages, $category)
+    {
+        $links = [];
+        for($i=1; $i<=$numPages; $i++)
+        {
+            $links[] = $this->router
+                ->generate('app_products_showbycategory', ['page' => $i, 'categoryName' => $category]);
         }
         return $links;
     }

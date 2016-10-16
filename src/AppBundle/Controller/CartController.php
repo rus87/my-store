@@ -16,21 +16,18 @@ class CartController extends BaseController
      * @return Response
      * @Route(path="/cart")
      */
-    public function showCartAction()
+    public function showCartAction(Request $request)
     {
         $cartManager = $this->get("cart_manager");
-        $products = $cartManager->getCartProducts();
-        $currency = $this->get('currency_manager')->getClientCurrency();
-        $this->setProductsCurrency($products, $currency);
-        $form = $this->createCurrencyForm('app_cart_showcart', [])->createView();
-        return $this->render('Cart/cart.html.twig',
-            [
-                'products' => $products->getValues(),
-                'currency' => $this->get('currency_manager')->getClientCurrency(),
-                'categories' => $this->getDoctrine()->getManager()->getRepository("AppBundle:Category")
-                    ->findBy(['parent' => null]),
-                'form' => $form
-            ]);
+        $templateData['products'] = $cartManager->getCartProducts();
+        $templateData['currency'] = $this->get('currency_manager')->getClientCurrency();
+        $this->setProductsCurrency($templateData['products'], $templateData['currency']);
+        $templateData['categories'] = $this->getDoctrine()->getManager()->getRepository("AppBundle:Category")
+            ->findBy(['parent' => null]);
+        $templateData['form'] = $this->createCurrencyForm('app_cart_showcart', [])->createView();
+        $templateData['searchForm'] = $this->handleSearchForm($request);
+        if($this->searchRedirectResponse) return $this->searchRedirectResponse;
+        return $this->render('Cart/cart.html.twig', $templateData);
     }
 
     /**

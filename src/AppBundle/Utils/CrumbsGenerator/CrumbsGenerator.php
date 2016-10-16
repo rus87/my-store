@@ -47,6 +47,14 @@ class CrumbsGenerator
                     $crumbs []= $crumb;
                     break;
 
+                case 'app_products_showbycategory':
+                    $crumb->setLink($this->router->generate($item->getRouteName(), $item->getRouteParams()));
+                    $crumb->setMark(ucfirst($item->getRouteParams()['categoryName']));
+                    if($crumb->getMark(){mb_strlen($crumb->getMark()) - 1} != 's')
+                        $crumb->setMark($crumb->getMark().'s');
+                    $crumbs []= $crumb;
+                    break;
+
                 case 'app_product_show':
                     $crumb->setMark(ucfirst($item->getMark()));
                     $crumbs []= $crumb;

@@ -6,6 +6,7 @@ use AppBundle\Controller\BaseController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use AppBundle\Entity\Category;
 use AppBundle\Utils\CrumbsGenerator\InputData;
+use Symfony\Component\HttpFoundation\Request;
 
 class ProductController extends BaseController
 {
@@ -18,7 +19,7 @@ class ProductController extends BaseController
      *      options={"expose" : "true"}
      * )
      */
-    public function showAction($id)
+    public function showAction(Request $request, $id)
     {
         $product = $this->getDoctrine()->getManager()->getRepository("AppBundle:Product")->find($id);
         $gender = $product->getGender();
@@ -40,7 +41,6 @@ class ProductController extends BaseController
         $crumbsData[] = new InputData('app_product_show', null, $product->getTitle());
         dump($crumbs = $this->get('app.crumbs_generator')->make($crumbsData));
         $templateData['form'] = $this->createCurrencyForm('app_product_show', ['id' => $id])->createView();
-        $templateData['searchForm'] = $this->createSearchForm()->createView();
         $templateData['currency'] = $currency;
         $this->setProductsCurrency([$product], $currency);
         $templateData['product'] = $product;
@@ -50,7 +50,8 @@ class ProductController extends BaseController
             $templateData['randomProducts'] []= $this->getDoctrine()->getManager()->getRepository("AppBundle:Product")
                 ->getRandom($product->getCategory());
         $this->setProductsCurrency($templateData['randomProducts'], $currency);
-
+        $templateData['searchForm'] = $this->handleSearchForm($request);
+        if($this->searchRedirectResponse) return $this->searchRedirectResponse;
         return $this->render('product/product.html.twig', $templateData);
     }
 

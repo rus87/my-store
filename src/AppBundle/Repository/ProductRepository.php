@@ -83,14 +83,12 @@ class ProductRepository extends EntityRepository
 
     public function countProductsByCategory($categoryName)
     {
-        $productsCount = 0;
         $em = $this->getEntityManager();
-        foreach(ProductRepository::PRODUCTS_CLASSES as $className){
-            $query = $em->createQuery('SELECT COUNT(p.id) FROM AppBundle\Entity\Products\\'.$className.' p JOIN p.category c WHERE c.name = :cat');
-            $query->setParameter('cat', $categoryName);
-            $productsCount += $query->getSingleScalarResult();
-        }
-        return $productsCount;
+        $className = $em->getRepository('AppBundle:Category')->getProductsClassName($categoryName);
+        $query = $em->createQuery('SELECT COUNT(p.id) FROM AppBundle\Entity\Products\\'.$className.' p JOIN p.category c WHERE c.name = :cat');
+        $query->setParameter('cat', $categoryName);
+        return $query->getSingleScalarResult();
+
     }
 
     /**
