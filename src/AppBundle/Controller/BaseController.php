@@ -15,63 +15,49 @@ class BaseController extends Controller
 {
 
     protected $searchRedirectResponse;
+    protected $currencyRedirectResponse;
 
     /**
      * @param Product[] $products
      * @param Currency $currency
      * @return Product[]
      */
-    protected function setProductsCurrency($products, $currency)
+    protected function setProductsCurrency($products = null, $currency)
     {
-        foreach($products as $product){
-            $product->setCurrency($currency);
-        }
+        if($products)
+            foreach($products as $product){
+                $product->setCurrency($currency);
+            }
         return $products;
     }
 
-    /**
-     * @Route(path="/handleCurrencyForm")
-     */
-    public function handleCurrencyFormAction(Request $request)
+    protected function handleCurrencyForm(Request $request, $redirectRoute, $params)
     {
-        $params = [];
+        $currenciesNames = [];
         $repo = $this->getDoctrine()->getManager()->getRepository("AppBundle:Currency");
+        $clientCurrency = $this->get('currency_manager')->getClientCurrency();
         $currencies = $repo->findAll();
         foreach($currencies as $currency)
             $currenciesNames[$currency->getName()] = $currency->getName();
-        $clientCurrency = new Currency();
-        $form = $this->createForm(CurrencyType::class, $clientCurrency, ['currenciesNames' => $currenciesNames,]);
+        $form = $this->createForm(CurrencyType::class, $clientCurrency, ['currenciesNames' => $currenciesNames]);
         $form->handleRequest($request);
-        if($form->isValid()){
+        if($form->isSubmitted() && $form->isValid()){
             $newClientCurrency = $repo->findOneBy(['name' => $clientCurrency->getName()]);
             $this->get('currency_manager')->setClientCurrency($newClientCurrency);
-            $redirectRoute = $form['redirect_route']->getData();
-            $params = json_decode($form['params']->getData(), true);
+            if(($priceMin = $request->query->get('priceMin')) != null){
+                $priceMin /= $clientCurrency->getRatio();
+                $priceMin *= $newClientCurrency->getRatio();
+                $request->query->set('priceMin', round($priceMin, 2));
+            }
+            if(($priceMax = $request->query->get('priceMax')) != null){
+                $priceMax /= $clientCurrency->getRatio();
+                $priceMax *= $newClientCurrency->getRatio();
+                $request->query->set('priceMax', round($priceMax, 2));
+            }
+            $params = array_merge($params, $request->query->all());
+            $this->currencyRedirectResponse = $this->redirectToRoute($redirectRoute, $params);
         }
-        return $this->redirectToRoute($redirectRoute, $params);
-    }
-
-    /**
-     * @param string $redirectRoute
-     * @param array $params
-     * @return \Symfony\Component\Form\Form
-     */
-    protected function createCurrencyForm($redirectRoute, $params)
-    {
-        $currenciesNames = [];
-        $clientCurrency = $this->get('currency_manager')->getClientCurrency();
-        $currencies = $this->getDoctrine()->getManager()->getRepository("AppBundle:Currency")->findAll();
-        foreach($currencies as $currency)
-            $currenciesNames[$currency->getName()] = $currency->getName();
-        $form = $this->createForm(CurrencyType::class, $clientCurrency,
-            [
-                'currenciesNames' => $currenciesNames,
-                'handler' => $this->generateUrl('app_base_handlecurrencyform'),
-                'redirectRoute' => $redirectRoute,
-                'params' => json_encode($params)
-            ]);
-
-        return $form;
+        return $form->createView();
     }
 
     /**
