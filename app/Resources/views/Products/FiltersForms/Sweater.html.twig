@@ -1,0 +1,11 @@
+{% extends 'Products/FiltersForms/Default.html.twig' %}
+{% block other_fields %}
+    <div class="sleeveLengthFilter">
+        <p>
+            Sleeve length:
+            {{ form_widget(filtersForm.sleeveMin, {'id': 'sleeve-min'}) }} -
+            {{ form_widget(filtersForm.sleeveMax, {'id': 'sleeve-max'}) }}
+            cm
+        </p>
+    </div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'Products/FiltersForms/Default.html.twig' %}
+{% block other_fields %}
+    <div class="waistFilter">
+        <p>
+            Waist length:
+            {{ form_widget(filtersForm.waistMin, {'id': 'waist-min'}) }} -
+            {{ form_widget(filtersForm.waistMax, {'id': 'waist-max'}) }}
+            cm
+        </p>
+    </div>
+    <div class="lengthFilter">
+        <p>
+            Leg length:
+            {{ form_widget(filtersForm.lengthMin, {'id': 'length-min'}) }} -
+            {{ form_widget(filtersForm.lengthMax, {'id': 'length-max'}) }}
+            cm
+        </p>
+    </div>
+{% endblock %}

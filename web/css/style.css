@@ -1793,7 +1793,7 @@ form#search-form-four:hover #search-input-four {
     padding: 0 2px;
     text-align: center;
 }
-.price_filter button#search_price {
+.filters button#apply {
     border-top: 1px solid #dcdcdc;
     display: block;
     margin: 15px 0 10px;
@@ -3874,4 +3874,34 @@ h3.widget-title-modal {
 .form-error
 {
     color: red;
+}
+.products-cats
+{
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.price_filter input[id="amount"]
+{
+    border: 0;
+    font-weight:bold;
+}
+
+.price_filter input[id="price-min"], .price_filter input[id="price-max"],
+#sleeve-min, #sleeve-max, #waist-min, #waist-max, #length-min, #length-max
+{
+    width: 55px;
+    height: 25px;
+}
+.gender_filter label
+{
+    margin-right: 20px;
+}
+
+.filters .gender_filter, .filters .price_filter
+{
+    padding: 10px;
+    margin-right: 5px;
+    margin-top: 5px;
 }

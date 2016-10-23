@@ -1,0 +1,28 @@
+{{ form_start(filtersForm) }}
+    <div class="price_filter">
+        <p>
+            Price range:
+            {{ form_widget(filtersForm.priceMin, {'id': 'price-min'}) }} -
+            {{ form_widget(filtersForm.priceMax, {'id': 'price-max'}) }}
+            {{ currency.name }}
+        </p>
+        <div id="slider-range"></div>
+    </div>
+    <div class="gender_filter">
+        {{ form_label(filtersForm.gender) }}
+        <p>
+            {{ form_widget(filtersForm.gender.0) }}
+            {{ form_label(filtersForm.gender.0) }}
+
+            {{ form_widget(filtersForm.gender.1) }}
+            {{ form_label(filtersForm.gender.1) }}
+
+            {{ form_widget(filtersForm.gender.2) }}
+            {{ form_label(filtersForm.gender.2) }}
+            {% do filtersForm.gender.setRendered %}
+        </p>
+    </div>
+    {% block other_fields %}
+    {% endblock %}
+    <button id="apply" type="submit" class="button"><span><span>Apply</span></span></button>
+{{ form_end(filtersForm) }}
