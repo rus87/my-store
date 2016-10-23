@@ -1,2 +1,8 @@
-{% extends 'product.html.twig' %}
-
+{% extends 'Product/product.html.twig' %}
+{% block child_content %}
+    {{ parent() }}
+    {% block unique_properties %}
+        <p><strong>Waist: </strong>{{ product.waist }}</p>
+        <p><strong>Length: </strong>{{ product.length }}</p>
+    {% endblock %}
+{% endblock %}
