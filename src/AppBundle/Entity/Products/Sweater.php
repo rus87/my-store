@@ -75,5 +75,10 @@ class Sweater extends Product
     {
         return $this->composition;
     }
+
+    public static function getAvailableFilters()
+    {
+        return array_merge(parent::getAvailableFilters(), ['sleeveMin', 'sleeveMax']);
+    }
 }
 

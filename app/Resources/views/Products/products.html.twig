@@ -1,4 +1,8 @@
 {% extends "mybase.html.twig" %}
+{% block css %}
+    {{ parent() }}
+    <link type="text/css" rel="stylesheet" href="{{ asset('css/jquery-ui.min.css') }}">
+{% endblock %}
 {% block child_content %}
     {% block crumbs %}
         {% include 'breadcrumbs.html.twig' with {"crumbs": crumbs} %}
@@ -31,16 +35,10 @@
                                 {% endfor %}
                             </ul>
                         </div>
-                        <div class="section-title border-none"><h2>Price</h2></div>
+                        <div class="section-title border-none"><h2>Filters</h2></div>
                         <div class="sidebar-category-list">
-                            <div class="price_filter">
-                                <div id="slider-range"></div>
-                                <div class="price_slider_amount">
-                                    <div class="slider-values">
-                                        <input type="text" id="amount" name="price"  placeholder="Add Your Price" />
-                                    </div>
-                                </div>
-                                <button id="search_price" name="search_price" type="button" class="button"><span><span>Search</span></span></button>
+                            <div class="filters">
+                                {% include 'Products/FiltersForms/' ~ filtersTpl ~ '.html.twig' %}
                             </div>
                         </div>
                         <div class="section-title border-none"><h2>Manufacturer</h2></div>
@@ -134,6 +132,17 @@
                     <div class="clearfix"></div>
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="grid">
+                            {% block children_cats %}
+                                {% if childrenCats is not empty %}
+                                    <div class="products-cats">
+                                        <div class="row">
+                                            {% for cat in childrenCats %}
+                                                <div class="col-sm-4"><a href="{{ cat.link }}">{{ cat.name|upper~' ('~cat.count~')' }}</a> </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endblock %}
                             <div class="row">
                                 {% for product in products %}
                                     <div class="col-md-4 col-sm-4">
@@ -286,4 +295,7 @@
     {{ parent() }}
     <script src="{{ asset("js/Products/QuickView.js") }}" type="text/javascript"></script>
     <script src="{{ asset("js/Products/OrderBy.js") }}" type="text/javascript"></script>
+    <script src="{{ asset("js/Products/priceRange.js") }}" type="text/javascript"></script>
+    <script src="{{ asset("js/Products/jquery-ui.min.js") }}" type="text/javascript"></script>
+    <script src="{{ asset("js/Products/price-slider.js") }}" type="text/javascript"></script>
 {% endblock %}

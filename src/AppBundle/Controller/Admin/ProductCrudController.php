@@ -131,7 +131,7 @@ class ProductCrudController extends Controller
                 $file->move($this->getParameter('photo_folder').'/'.$product->getId(), $product->getMainPhoto2()->getName());
             }
             $em->flush();
-            return $this->redirectToRoute('app_admin_productcrud_updateproduct', ['id' => $product->getId()]);
+            return $this->redirectToRoute('app_admin_productcrud_update', ['id' => $product->getId()]);
         }
         return $this->render("Admin/ProductsUpdate/".$tmp[sizeof($tmp)-1].".html.twig",
         ['form'=>$form->createView(), 'product' => $product]);
@@ -180,7 +180,8 @@ class ProductCrudController extends Controller
         if($parents)
             $currentCatPath = array_merge($currentCatPath, $parents);
         $currentCatPath = array_reverse($currentCatPath);
-        $templateData['products'] = $productsRepo->getByCategory($currentCat);
+        //$templateData['products'] = $productsRepo->getByCategory($currentCat);
+        $templateData['products'] = $this->get('product_manager')->findByCategory($currentCat->getName());
         dump($currentCatPath);
         $templateData['currentCatPath'] = $currentCatPath;
         return $this->render('Admin/Products-list.html.twig', $templateData);

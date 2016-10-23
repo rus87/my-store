@@ -52,7 +52,10 @@
                                 <div class="product-name">
                                     <h1> {{ product.title }} </h1>
                                 </div>
-                                <p class="no-rating no-margin"><a href="#">Be the first to review this product</a></p>
+                                <p><strong>Gender: </strong>{{ product.gender|capitalize }}</p>
+                                <p><strong>Brand: </strong>{{ product.brand }}</p>
+                                {% block unique_properties %}
+                                {% endblock %}
                                 <p class="availability">Availability: <span>In stock</span></p>
                                 <div class="price-box">
                                     <p class="old-price">

@@ -8,16 +8,19 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use AppBundle\Utils\ProductManager;
 use AppBundle\Entity\Category;
 
 class Paginator
 {
     private $em;
     private $requestStack;
-    const PRODUCTS_PER_PAGE = 9;
+    private $productManager;
+    const PRODUCTS_PER_PAGE = 12;
 
-    public function __construct(EntityManager $em, RequestStack $requestStack, Router $router)
+    public function __construct(ProductManager $productManager, EntityManager $em, RequestStack $requestStack, Router $router)
     {
+        $this->productManager = $productManager;
         $this->em = $em;
         $this->requestStack = $requestStack;
         $this->router = $router;
@@ -25,8 +28,7 @@ class Paginator
 
     public function countPagesByCategory($categoryName)
     {
-        $productsCount = $this->em->getRepository("AppBundle:Product")->countProductsByCategory($categoryName);
-        dump($productsCount);
+        $productsCount = $this->productManager->countByCategory($categoryName);
         return (int)ceil($productsCount / Paginator::PRODUCTS_PER_PAGE);
     }
 
@@ -40,11 +42,9 @@ class Paginator
             if(gettype($category) == "string")
                 $category = $catsRepo->findOneBy(['name' => $category]);
         $offset = Paginator::PRODUCTS_PER_PAGE * ($page - 1);
-        return $prodsRepo->findBy(
-            ['category' => $category->getId()],
-            [$orderByProperty => $orderByDirection],
-            Paginator::PRODUCTS_PER_PAGE,
-            $offset);
+        return $this->productManager->findByCategory($category->getName(), $orderBy, Paginator::PRODUCTS_PER_PAGE, $offset);
+
+
     }
 
     public function countSearchPages($search, $productClassName)
@@ -72,70 +72,20 @@ class Paginator
         return $links;
     }
 
-    public function makeGenderCategoryPagesLinks($numPages, $gender, $category)
-    {
-        $links = [];
-        for($i=1; $i<=$numPages; $i++)
-        {
-            $links[] = $this->router
-                ->generate('app_products_showbygenderandcategory', ['page' => $i, 'gender' => $gender, 'category' => $category]);
-        }
-        return $links;
-    }
 
     public function makeCategoryPagesLinks($numPages, $category)
     {
         $links = [];
+        $params = $this->requestStack->getCurrentRequest()->query->all();
         for($i=1; $i<=$numPages; $i++)
         {
             $links[] = $this->router
-                ->generate('app_products_showbycategory', ['page' => $i, 'categoryName' => $category]);
+                ->generate('app_products_showbycategory',
+                    array_merge($params, ['page' => $i, 'categoryName' => $category]));
         }
         return $links;
     }
 
-    public function countPagesByGenderAndCategory($gender, $category)
-    {
-        $productsCount =
-            $this->em->getRepository("AppBundle:Product")->countProductsByGenderAndCategory($gender, $category);
-        $pagesCount = (int)ceil($productsCount / Paginator::PRODUCTS_PER_PAGE);
-        return $pagesCount;
-    }
-
-    public function getPageByGenderAndCategory($gender, $categoryName, $page, $orderBy)
-    {
-        $offset = Paginator::PRODUCTS_PER_PAGE * ($page - 1);
-        $category = $this->em->getRepository("AppBundle:Category")->findOneBy(['name' => $categoryName]);
-
-        /*
-        $products = $this->em->getRepository("AppBundle:Product")->findBy(
-            ['gender' => $gender, 'category' => $category->getId()],
-            [$orderBy => 'ASC'],
-            Paginator::PRODUCTS_PER_PAGE,
-            $offset);
-        */
-
-        $products = $this->em->getRepository("AppBundle:Product")->findProductsByGenderAndCategory(
-            $gender, $categoryName, $orderBy, Paginator::PRODUCTS_PER_PAGE, $offset);
-
-        return $products;
-    }
-
-    public function countPagesByGender($gender)
-    {
-        $productsCount =
-            $this->em->getRepository("AppBundle:Product")->countProductsByGender($gender);
-        $pagesCount = (int)ceil($productsCount / Paginator::PRODUCTS_PER_PAGE);
-        return $pagesCount;
-    }
-
-    public function getPageByGender($gender, $page)
-    {
-        $offset = Paginator::PRODUCTS_PER_PAGE * ($page - 1);
-        $products = $this->em->getRepository("AppBundle:Product")
-            ->getByGender($gender, null, Paginator::PRODUCTS_PER_PAGE, $offset);
-        return $products;
-    }
 
     /**
      * @param string $orderBy

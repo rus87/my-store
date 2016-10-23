@@ -22,7 +22,7 @@ class LoadFixtures implements FixtureInterface
         $genders = ['male', 'female'];
         $brands = ['LNA', 'Baldinini', 'Mad Rock', 'Acorn', 'Kanzler', 'Melissa Odabash', 'Canali', 'Preen', 'Tommy Hilfiger', 'Versus'];
         $waists = ['55', '64', '71', '60', '67'];
-        for($i=0; $i<=100; $i++)
+        for($i=0; $i<=500; $i++)
         {
             $productClassName = $classNames[array_rand($classNames)];
             $class = 'AppBundle\Entity\Products\\'.$productClassName;
@@ -34,7 +34,7 @@ class LoadFixtures implements FixtureInterface
             $product->setGender($genders[array_rand($genders)]);
             $product->setBrand($brands[array_rand($brands)]);
             if(property_exists($product, 'sleeveLength'))
-                $product->setSleeveLength('48');
+                $product->setSleeveLength([44,45,46,47,48,49,50,51,51,52][array_rand([44,45,46,47,48,49,50,51,51,52])]);
             if(property_exists($product, 'filling'))
                 $product->setFilling('test filling');
             if(property_exists($product, 'outerMaterial'))

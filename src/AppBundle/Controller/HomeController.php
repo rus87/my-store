@@ -19,10 +19,10 @@ class HomeController extends BaseController
      */
     public function homeAction(Request $request)
     {
-        //$form = $this->createCurrencyForm('app_home_home', []);
         $templateData['categories'] = $this->getDoctrine()->getManager()->getRepository("AppBundle:Category")->findBy(['parent' => null]);
         $templateData['currency'] = $this->get('currency_manager')->getClientCurrency();
-        $templateData['form'] = $this->createCurrencyForm('app_home_home', [])->createView();
+        $templateData['form'] = $this->handleCurrencyForm($request, 'app_home_home', []);
+        if($this->currencyRedirectResponse) return $this->currencyRedirectResponse;
         $templateData['searchForm'] = $this->handleSearchForm($request);
         if($this->searchRedirectResponse) return $this->searchRedirectResponse;
         return $this->render("mybase.html.twig", $templateData);

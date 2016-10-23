@@ -43,12 +43,12 @@ class CategoryRepository extends EntityRepository
      * @param Category|string $category
      * @return array|null
      */
-    public function getAllParents($category)
+    public function getAllParents($category, $reverse = false)
     {
         if(! $category instanceof Category)
             if(gettype($category) == "string")
                 $category = $this->findOneBy(['name' => $category]);
-        $parent = $category->getParent();
+        $category ? $parent = $category->getParent(): $parent = null;
         if($parent == null) return null;
         $parents []= $parent;
         while($parent != null){
@@ -56,14 +56,16 @@ class CategoryRepository extends EntityRepository
             if($parent != null)
                 $parents []= $parent;
         }
+        if($reverse) $parents = array_reverse($parents);
         return $parents;
     }
 
     /**
      * @param Category $category
+     * @param $reverse bool
      * @return array
      */
-    public function getAllChildren($category)
+    public function getAllChildren($category, $reverse = false)
     {
         $allChildren = [];
         $children = $category->getChildren()->getValues();
@@ -73,6 +75,9 @@ class CategoryRepository extends EntityRepository
             $children = $allChildren[$i]->getChildren()->getValues();
             $allChildren = array_merge($allChildren, $children);
         }
+        if($reverse)
+            if($allChildren)
+                $allChildren = array_reverse($allChildren);
        return $allChildren;
     }
 
@@ -98,6 +103,7 @@ class CategoryRepository extends EntityRepository
      */
     public function getProductsClassName($category)
     {
+        if($category == null) return null;
         if(! $category instanceof Category)
             if(gettype($category) == "string")
                 $category = $this->findOneBy(['name' => $category]);

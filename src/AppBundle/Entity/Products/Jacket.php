@@ -138,5 +138,10 @@ class Jacket extends Product
     {
         return $this->seasonality;
     }
+
+    public static function getAvailableFilters()
+    {
+        return array_merge(parent::getAvailableFilters(), ['sleeveMin', 'sleeveMax']);
+    }
 }
 

@@ -135,7 +135,7 @@ class Category
     public function getDisplayedName()
     {
         $displayedName = $this->getName();
-        if($displayedName{mb_strlen($displayedName) - 1} != 's')
+        if($displayedName[mb_strlen($displayedName) - 1] != 's')
             $displayedName = $displayedName.'s';
         return ucfirst($displayedName);
     }

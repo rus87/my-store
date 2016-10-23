@@ -11,6 +11,8 @@
 
     {% block main_area %}
         {{ parent() }}
+        {% block children_cats %}
+        {% endblock %}
     {% endblock %}
 
 {% endblock %}

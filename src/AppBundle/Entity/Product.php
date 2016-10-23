@@ -513,4 +513,9 @@ abstract class Product
         return "img/Products/".$this->getId();
     }
 
+    public static function getAvailableFilters()
+    {
+        return ['priceMin', 'priceMax', 'gender'];
+    }
+
 }

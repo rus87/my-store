@@ -75,5 +75,10 @@ class Trousers extends Product
     {
         return $this->length;
     }
+
+    public static function getAvailableFilters()
+    {
+        return array_merge(parent::getAvailableFilters(), ['waistMin', 'waistMax', 'lengthMin', 'lengthMax']);
+    }
 }
 

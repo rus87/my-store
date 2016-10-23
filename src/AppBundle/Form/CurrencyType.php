@@ -16,18 +16,6 @@ class CurrencyType extends AbstractType
                 'choices' => $options['currenciesNames'],
                 'attr' => ['onchange' => 'send()']
             ]);
-        $builder->add('redirect_route', HiddenType::class,
-            [
-                'mapped' => false,
-                'data' => $options['redirectRoute']
-            ]);
-        $builder->add('params', HiddenType::class,
-            [
-                'mapped' => false,
-                'data' => $options['params']
-            ]);
-
-        $builder->setAction($options['handler']);
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -36,9 +24,6 @@ class CurrencyType extends AbstractType
             [
                 'data_class' => 'AppBundle\Entity\Currency',
                 'currenciesNames' => [],
-                'handler' => '',
-                'redirectRoute' => '',
-                'params' => ''
             ]
         );
     }

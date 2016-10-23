@@ -186,80 +186,10 @@
                             <nav>
                                 <ul id="nav">
                                     <li class="current"><a href="{{ path('app_home_home') }}">{{ 'Home'|trans([], 'mybase') }}</a></li>
-                                    <li>
-                                        <a href="{{ path('app_products_showbygender', {'gender': 'male'}) }}">Men</a>
-                                        <div class="megamenu">
-                                            <div class="megamenu-list clearfix">
-                                                {% for category in categories %}
-                                                    {% if loop.index != categories|length %}
-                                                        <span>
-                                                            <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'male', 'category': category.getName}) }}" class="mega-title">{{ category.getDisplayedName }}</a>
-                                                            {% for subcategory in category.getChildren %}
-                                                                <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'male', 'category': subcategory.getName}) }}">{{ subcategory.getDisplayedName }}</a>
-                                                            {% endfor %}
-                                                        </span>
-                                                    {% else %}
-                                                        <span class="no-margin">
-                                                                <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'male', 'category': category.getName}) }}" class="mega-title">{{ category.getDisplayedName }}</a>
-                                                            {% for subcategory in category.getChildren %}
-                                                                <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'male', 'category': subcategory.getName}) }}">{{ subcategory.getDisplayedName }}</a>
-                                                            {% endfor %}
-                                                            </span>
-                                                    {% endif %}
-                                                {% endfor %}
-                                                <span class="no-margin">
-                                                    <a href="#" class="mega-banner">
-                                                        <img src="{{ asset('img/mega-banner.jpg') }}" alt="">
-                                                    </a>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <a href="{{ path('app_products_showbygender', {'gender': 'female'}) }}">Women</a>
-                                        <div class="megamenu">
-                                            <div class="megamenu-list clearfix">
-                                                {% for category in categories %}
-                                                    {% if loop.index != categories|length %}
-                                                        <span>
-                                                            <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'female', 'category': category.getName}) }}" class="mega-title">{{ category.getDisplayedName }}</a>
-                                                            {% for subcategory in category.getChildren %}
-                                                                <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'female', 'category': subcategory.getName}) }}">{{ subcategory.getDisplayedName }}</a>
-                                                            {% endfor %}
-                                                        </span>
-                                                    {% else %}
-                                                        <span class="no-margin">
-                                                                <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'female', 'category': category.getName}) }}" class="mega-title">{{ category.getDisplayedName }}</a>
-                                                            {% for subcategory in category.getChildren %}
-                                                                <a href="{{ path('app_products_showbygenderandcategory', {'gender': 'female', 'category': subcategory.getName}) }}">{{ subcategory.getDisplayedName }}</a>
-                                                            {% endfor %}
-                                                            </span>
-                                                    {% endif %}
-                                                {% endfor %}
-                                                <span class="no-margin">
-                                                    <a href="#" class="mega-banner">
-                                                        <img src="{{ asset('img/mega-banner.jpg') }}" alt="">
-                                                    </a>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li><a href="shop-grid.html">Footwear</a></li>
-                                    <li><a href="index.html">Pages</a>
-                                        <ul class="sub-menu">
-                                            <li><a href="#" class="mega-title">Other Pages</a></li>
-                                            <li><a href="about.html">About Us</a></li>
-                                            <li><a href="blog.html">Blog Page</a></li>
-                                            <li><a href="blog-details.html">Blog Details Page</a></li>
-                                            <li><a href="account.html">My Account</a></li>
-                                            <li><a href="cart.html">Cart Page</a></li>
-                                            <li><a href="checkout.html">Checkout Page</a></li>
-                                            <li><a href="product-details.html">Product Details</a></li>
-                                            <li><a href="shop-grid.html">Shop Grid</a></li>
-                                            <li><a href="shop-list.html">Shop List</a></li>
-                                            <li><a href="wishlist.html">Wishlist</a></li>
-                                        </ul>
-                                    </li>
+                                    <li><a href="{{ path('app_products_showbycategory', {'categoryName': 'jacket'}) }}">Jackets</a></li>
+                                    <li><a href="{{ path('app_products_showbycategory', {'categoryName': 'sweater'}) }}">Sweaters</a></li>
+                                    <li><a href="{{ path('app_products_showbycategory', {'categoryName': 'blouse'}) }}">Blouses</a></li>
+                                    <li><a href="{{ path('app_products_showbycategory', {'categoryName': 'trousers'}) }}">Trousers</a></li>
                                     <li><a href="contact.html">Contact Us</a></li>
                                 </ul>
                             </nav>
@@ -607,10 +537,6 @@
     <!-- owl.carousel JS
     ============================================ -->
     <script src="{{ asset('js/owl.carousel.min.js') }}"></script>
-
-    <!-- price-slider JS
-    ============================================ -->
-    <script src="{{ asset('js/jquery-price-slider.js') }}"></script>
 
     <!-- scrollUp JS
     ============================================ -->

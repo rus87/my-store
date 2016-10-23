@@ -33,24 +33,10 @@ class CrumbsGenerator
                     $crumbs []= $crumb;
                     break;
 
-                case 'app_products_showbygender':
-                    $item->getRouteParams()['gender'] == 'male' ? $crumb->setMark('Men') : $crumb->setMark('Women');
-                    $crumb->setLink($this->router->generate('app_home_home'));
-                    $crumbs []= $crumb;
-                    break;
-
-                case 'app_products_showbygenderandcategory':
-                    $crumb->setLink($this->router->generate($item->getRouteName(), $item->getRouteParams()));
-                    $crumb->setMark(ucfirst($item->getRouteParams()['category']));
-                    if($crumb->getMark(){mb_strlen($crumb->getMark()) - 1} != 's')
-                        $crumb->setMark($crumb->getMark().'s');
-                    $crumbs []= $crumb;
-                    break;
-
                 case 'app_products_showbycategory':
                     $crumb->setLink($this->router->generate($item->getRouteName(), $item->getRouteParams()));
                     $crumb->setMark(ucfirst($item->getRouteParams()['categoryName']));
-                    if($crumb->getMark(){mb_strlen($crumb->getMark()) - 1} != 's')
+                    if($crumb->getMark()[mb_strlen($crumb->getMark()) - 1] != 's')
                         $crumb->setMark($crumb->getMark().'s');
                     $crumbs []= $crumb;
                     break;
@@ -68,4 +54,5 @@ class CrumbsGenerator
         $crumbs[count($crumbs) - 1]->setIsLast(true);
         return $crumbs;
     }
+
 }
