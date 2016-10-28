@@ -3899,9 +3899,21 @@ h3.widget-title-modal {
     margin-right: 20px;
 }
 
-.filters .gender_filter, .filters .price_filter
+.filters .gender_filter, .filters .price_filter,
+.filters .sleeveLength_filter, .filters .brand_filter
 {
     padding: 10px;
     margin-right: 5px;
     margin-top: 5px;
+}
+
+.filters input[type="checkbox"], .filters input[type="radio"], .filters label
+{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.sidebar-category-list > ul
+{
+
 }

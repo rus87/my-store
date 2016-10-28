@@ -13,12 +13,13 @@ class GenderFilter extends AbstractFilter
 
     public function setRawValue($input)
     {
-        $this->rawValue = (string)$input;
+        $this->rawValue = $input;
     }
 
     public function setQueryValue()
     {
-        $this->queryValue = "p.gender = '$this->rawValue'";
+        $this->rawValue == 'both' ? $this->queryValue = null :
+            $this->queryValue = "p.gender = '$this->rawValue'";
     }
 
 }

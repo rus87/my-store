@@ -27,12 +27,13 @@ class CheckoutController extends BaseController
         $templateData = [
             'checkoutForm' => $checkoutForm->createView(),
             'cart' => $cart,
-            'form' => $this->createCurrencyForm('app_checkout_index', [])->createView(),
             'categories' => $em->getRepository('AppBundle:Category')->findBy(['parent' => null]),
             'currency' => $currency
         ];
         $templateData['searchForm'] = $this->handleSearchForm($request);
         if($this->searchRedirectResponse) return $this->searchRedirectResponse;
+        $templateData['form'] = $this->handleCurrencyForm($request, 'app_checkout_index');
+        if($this->currencyRedirectResponse) return $this->currencyRedirectResponse;
         return $this->render('Checkout/checkout.html.twig', $templateData);
     }
 

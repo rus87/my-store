@@ -8,7 +8,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use AppBundle\Form\Admin\PhotoType;
+use AppBundle\Form\Admin\BrandType;
 
 class ProductType extends AbstractType
 {
@@ -20,6 +22,7 @@ class ProductType extends AbstractType
             ->add('brand')
             ->add('description')
             ->add('gender', ChoiceType::class, ['choices' => ['Male' => 'male', 'Female' => 'female']])
+            ->add('brand', EntityType::class, ['class' => 'AppBundle:Brand', 'choice_label' => 'title'])
             ->add('category', ChoiceType::class, ['mapped' => false, 'choices' => $options['categories']]);
         if($options['mode'] == 'add')
             $builder
@@ -36,8 +39,7 @@ class ProductType extends AbstractType
                 ->add('photos', CollectionType::class, ['entry_type' => RemovePhotoType::class, 'required' => false])
                 ->add('newPhoto', PhotoType::class, ['required' => false, 'mode' => 'update', 'label' => 'Add photo'])
                 ->add('mainPhoto1', PhotoType::class, ['mode' => 'no_del', 'mapped' => false, 'label' => 'Main photo 1', 'required' => false])
-                ->add('mainPhoto2', PhotoType::class, ['mode' => 'no_del', 'mapped' => false, 'label' => 'Main photo 2', 'required' => false])
-            ;
+                ->add('mainPhoto2', PhotoType::class, ['mode' => 'no_del', 'mapped' => false, 'label' => 'Main photo 2', 'required' => false]);
         }
     }
 

@@ -99,9 +99,10 @@ class CategoryRepository extends EntityRepository
      * category, assuming that product's root category has the same name as the class.
      *
      * @param Category|string $category
+     * @param bool $full
      * @return string
      */
-    public function getProductsClassName($category)
+    public function getProductsClassName($category, $full = false)
     {
         if($category == null) return null;
         if(! $category instanceof Category)
@@ -109,8 +110,12 @@ class CategoryRepository extends EntityRepository
                 $category = $this->findOneBy(['name' => $category]);
 
         $tmp = $this->getAllParents($category);
-        if($tmp == null) return ucfirst($category->getName());
-        return ucfirst($tmp[count($tmp)-1]->getName());
+        if($tmp == null) $class =  ucfirst($category->getName());
+        else
+            $class = ucfirst($tmp[count($tmp)-1]->getName());
+        if($full)
+            $class = 'AppBundle\Entity\Products\\'.$class;
+        return $class;
     }
 
     /**
@@ -123,6 +128,11 @@ class CategoryRepository extends EntityRepository
         $classCats[] = $rootCat;
         $classCats = array_merge($classCats, $this->getAllChildren($rootCat));
         return $classCats;
+
+    }
+
+    public function getAllAsCatalog()
+    {
 
     }
 

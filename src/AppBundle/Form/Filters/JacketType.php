@@ -25,14 +25,6 @@ class JacketType extends FiltersType
             ->add('sleeveMax', IntegerType::class, ['required' => false]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(
-            [
-
-            ]
-        );
-    }
 
     public function getName()
     {

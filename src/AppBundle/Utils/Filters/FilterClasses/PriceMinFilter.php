@@ -2,11 +2,15 @@
 namespace AppBundle\Utils\Filters\FilterClasses;
 
 use AppBundle\Utils\Filters\AbstractFilter;
+use AppBundle\Utils\CurrencyManager;
 
 class PriceMinFilter extends AbstractFilter
 {
-    public function __construct($rawValue)
+    private $cm;
+
+    public function __construct($rawValue, CurrencyManager $cm)
     {
+        $this->cm = $cm;
         parent::__construct($rawValue);
         $this->id = 'priceMin';
     }
@@ -19,8 +23,12 @@ class PriceMinFilter extends AbstractFilter
 
     public function setQueryValue()
     {
-        $this->rawValue == null ? $this->queryValue = null :
-            $this->queryValue = "p.price > $this->rawValue";
+        $price = $this->rawValue;
+        if($price == null)
+            $this->queryValue = null;
+        else{
+            $price = round($price / $this->cm->getClientCurrency()->getRatio(), 2);
+            $this->queryValue = "p.price > $price";
+        }
     }
-
 }

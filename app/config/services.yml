@@ -28,11 +28,7 @@ services:
 
     app.crumbs_generator:
         class: AppBundle\Utils\CrumbsGenerator\CrumbsGenerator
-        arguments: ['@router']
-
-    product_filtrator:
-        class: AppBundle\Utils\ProductsFiltrator
-        arguments: ['@request_stack', '@currency_manager']
+        arguments: ['@router', '@doctrine.orm.entity_manager']
 
     product_manager:
         class: AppBundle\Utils\ProductManager
@@ -40,4 +36,4 @@ services:
 
     filters_handler:
         class: AppBundle\Utils\Filters\FiltersHandler
-        arguments: ['@request_stack', '@doctrine.orm.entity_manager', '@router', '@form.factory']
+        arguments: ['@request_stack', '@doctrine.orm.entity_manager', '@router', '@form.factory', '@currency_manager']

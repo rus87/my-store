@@ -32,6 +32,12 @@ class Paginator
         return (int)ceil($productsCount / Paginator::PRODUCTS_PER_PAGE);
     }
 
+    public function countPagesByBrand($brandId)
+    {
+        $productsCount = $this->productManager->countByBrand($brandId);
+        return (int)ceil($productsCount / Paginator::PRODUCTS_PER_PAGE);
+    }
+
     public function getPageByCategory($category, $orderBy, $page)
     {
         $catsRepo = $this->em->getRepository('AppBundle:Category');
@@ -43,31 +49,37 @@ class Paginator
                 $category = $catsRepo->findOneBy(['name' => $category]);
         $offset = Paginator::PRODUCTS_PER_PAGE * ($page - 1);
         return $this->productManager->findByCategory($category->getName(), $orderBy, Paginator::PRODUCTS_PER_PAGE, $offset);
-
-
     }
 
-    public function countSearchPages($search, $productClassName)
+    public function getPageByBrand($brandId, $orderBy, $page)
     {
-        $productsCount =
-            $this->em->getRepository("AppBundle:Product")->countSearch($search, $productClassName);
+        $offset = Paginator::PRODUCTS_PER_PAGE * ($page - 1);
+        return $this->productManager->findByBrand($brandId, $orderBy, Paginator::PRODUCTS_PER_PAGE, $offset);
+    }
+
+    public function countSearchPages($search, $class)
+    {
+        $productsCount = $this->productManager->countSearch($search, $class);
         return (int)ceil($productsCount / Paginator::PRODUCTS_PER_PAGE);
     }
 
-    public function getSearchPage($search, $productClassName, $page, $orderBy)
+    public function getSearchPage($search, $class, $page, $orderBy)
     {
-        $repo = $this->em->getRepository('AppBundle:Product');
         $offset = Paginator::PRODUCTS_PER_PAGE * ($page - 1);
-        return $repo->search($search, $productClassName, $orderBy, Paginator::PRODUCTS_PER_PAGE, $offset);
+        return $this->productManager->search($search, $class, $orderBy, Paginator::PRODUCTS_PER_PAGE, $offset);
     }
 
-    public function makeSearchPagesLinks($numPages, $query, $type)
+    public function makeSearchPagesLinks($numPages, $query, $type = null)
     {
         $links = [];
+        $params = [];
+        $params['q'] = $query;
+        if($type) $params['type'] = $type;
         for($i=1; $i<=$numPages; $i++)
         {
+            $params['page'] = $i;
             $links[] = $this->router
-                ->generate('app_products_showsearchresults', ['page' => $i, 'q' => $query, 'type' => $type]);
+                ->generate('app_products_showsearchresults', $params);
         }
         return $links;
     }
@@ -82,6 +94,19 @@ class Paginator
             $links[] = $this->router
                 ->generate('app_products_showbycategory',
                     array_merge($params, ['page' => $i, 'categoryName' => $category]));
+        }
+        return $links;
+    }
+
+    public function makeByBrandPagesLinks($numPages, $brandId)
+    {
+        $links = [];
+        $params = $this->requestStack->getCurrentRequest()->query->all();
+        for($i=1; $i<=$numPages; $i++)
+        {
+            $links[] = $this->router
+                ->generate('app_products_showbybrand',
+                    array_merge($params, ['page' => $i, 'brandId' => $brandId]));
         }
         return $links;
     }

@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\DataFixtures\ORM;
 
+use AppBundle\Entity\Brand;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\Category;
@@ -13,6 +14,31 @@ use AppBundle\Entity\Products\Blouse;
 class LoadFixtures implements FixtureInterface
 {
     public function load(ObjectManager $manager)
+    {
+        $productRepo = $manager->getRepository('AppBundle:Product');
+        $brandRepo = $manager->getRepository('AppBundle:Brand');
+        $catRepo = $manager->getRepository('AppBundle:Category');
+        $products = $productRepo->findAll();
+        $handledCats = [];
+        foreach($products as $product){
+            $category = $product->getCategory();
+            if(in_array($category->getId(), $handledCats))
+                continue;
+            $brand = $product->getBrand();
+            $category->addBrand($brand);
+            $handledCats[] = $category->getId();
+            $manager->persist($category);
+        }
+        $manager->flush();
+        /*$brand = $brandRepo->find(8);
+        $cat = $catRepo->find(5);
+        $brand->addCategory($cat);
+        $manager->persist($brand);
+        $manager->flush();
+        */
+    }
+
+    private function loadProducts(ObjectManager $manager)
     {
         $categories = $manager->getRepository('AppBundle:Category')->findAll();
         $productRepo = $manager->getRepository('AppBundle:Product');
@@ -56,46 +82,23 @@ class LoadFixtures implements FixtureInterface
         $manager->flush();
     }
 
-
-/*
-    private function loadCategories(ObjectManager $manager)
+    private function loadBrands(ObjectManager $manager)
     {
-        $jacket = new Category();
-        $jacket->setName("Jacket");
+        $prodRepo = $manager->getRepository('AppBundle:Product');
+        $catRepo = $manager->getRepository('AppBundle:Category');
+        $brandRepo = $manager->getRepository('AppBundle:Brand');
+        $categories = $catRepo->findAll();
+        /*$brand = new Brand('LNA');
+        $brand->addCategory($categories[array_rand($categories)]);
+        $brand->addCategory($categories[array_rand($categories)]);
+        $manager->persist($brand);
+        $manager->flush();*/
 
-        $trousers = new Category();
-        $trousers->setName("Trousers");
-
-        $sweater = new Category();
-        $sweater->setName("Sweater");
-
-        $manager->persist($jacket);
-        $manager->persist($trousers);
-        $manager->persist($sweater);
-
+        $product = $prodRepo->find(120);
+        //$brand = $brandRepo->find(2);
+        $product->setBrand();
         $manager->flush();
     }
 
-    private function loadProducts(ObjectManager $manager)
-    {
 
-        $seasons = ["winter", "spring", "summer", "autumn"];
-        $genders = ["male", "female"];
-        $categories = ["Trousers", "Jacket", "Sweater"];
-
-        foreach(range(1, 30) as $i)
-        {
-
-            $product = new Product();
-            $product->setDescription("test description for this test product");
-            $product->setTitle("product $i");
-            $product->setSeason($seasons[array_rand($seasons)]);
-            $product->setPrice(rand(120, 460));
-            $product->setGender($genders[array_rand($genders)]);
-
-            $manager->persist($product);
-            $manager->flush();
-        }
-    }
-*/
 }

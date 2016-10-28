@@ -6,7 +6,7 @@ $( function() {
         url: Routing.generate('app_products_pricesliderinit'),
         success: function(response){
             initValues = JSON.parse(response);
-            console.log(initValues);
+            //console.log(initValues);
 
             $( "#slider-range" ).slider({
                 range: true,

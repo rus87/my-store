@@ -31,7 +31,7 @@ class BaseController extends Controller
         return $products;
     }
 
-    protected function handleCurrencyForm(Request $request, $redirectRoute, $params)
+    protected function handleCurrencyForm(Request $request, $redirectRoute, $params = [])
     {
         $currenciesNames = [];
         $repo = $this->getDoctrine()->getManager()->getRepository("AppBundle:Currency");
@@ -68,6 +68,7 @@ class BaseController extends Controller
     protected function handleSearchForm(Request $request, $formData = null)
     {
         $searchCats = $this->getDoctrine()->getManager()->getRepository('AppBundle:Category')->findBy(['parent' => null]);
+        $choices['All'] = 'all';
         foreach($searchCats as $cat)
             $choices[$cat->getDisplayedName()] = $cat->getName();
         $form = $this->createForm(SearchProductsType::class, $formData, ['choices' => $choices]);
@@ -75,8 +76,10 @@ class BaseController extends Controller
         if($form->isValid()){
             $search = $form['query']->getData();
             $className = $form['className']->getData();
+            $queryParams['q'] = $search;
+            if($className != 'all')  $queryParams['type'] = $className;
             $this->searchRedirectResponse =
-                $this->redirectToRoute('app_products_showsearchresults', ['q' => $search, 'type' => $className]);
+                $this->redirectToRoute('app_products_showsearchresults', $queryParams);
         }
         else return $form->createView();
     }

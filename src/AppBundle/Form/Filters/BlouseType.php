@@ -20,14 +20,6 @@ class BlouseType extends SweaterType
         parent::buildForm($builder, $options);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(
-            [
-
-            ]
-        );
-    }
 
     public function getName()
     {

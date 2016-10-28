@@ -54,32 +54,4 @@ class ProductRepository extends EntityRepository
 
 
 
-    public function search($search, $productClassName, $orderBy = 'id:ASC', $limit = null, $offset = null)
-    {
-        $em = $this->getEntityManager();
-        $orderByDirection = explode(':', $orderBy)[1];
-        $orderByProperty = explode(':', $orderBy)[0];
-        $q = "SELECT p FROM AppBundle\Entity\Products\\".ucfirst($productClassName)." p
-              WHERE p.title LIKE :search OR p.description LIKE :search
-              ORDER BY p.$orderByProperty $orderByDirection";
-        $query = $em->createQuery($q);
-
-        $search = "%".$search."%";
-        $query->setParameter('search', $search);
-        $query->setMaxResults($limit);
-        $query->setFirstResult($offset);
-        return $query->getResult();
-    }
-
-    public function countSearch($search, $productClassName)
-    {
-        $em = $this->getEntityManager();
-        $q = "SELECT COUNT(p.id) FROM AppBundle\Entity\Products\\".ucfirst($productClassName)." p
-              WHERE p.title LIKE :search OR p.description LIKE :search";
-        $query = $em->createQuery($q);
-        $search = "%".$search."%";
-        $query->setParameter('search', $search);
-        return $query->getSingleScalarResult();
-    }
-
 }

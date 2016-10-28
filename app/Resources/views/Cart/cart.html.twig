@@ -40,10 +40,10 @@
                                 </tbody>
                             </table>
                             <div class="all-cart-buttons">
-                                <button class="button" type="button"><span>Continue Shopping</span></button>
+                                <button class="button" type="button" onclick="location.href='{{ path('app_home_home') }}';"><span>Continue Shopping</span></button>
                                 <div class="floatright">
-                                    <button class="button clear-cart" type="button"><span>Clear Shopping Cart</span></button>
-                                    <button class="button" type="button"><span>Update Shopping Cart</span></button>
+                                    <button class="button clear-cart" type="button" onclick="location.href='{{ path('app_cart_clear') }}'"><span>Clear Shopping Cart</span></button>
+                                    <button class="button" type="button" onclick="location.href='{{ path('app_cart_showcart') }}';"><span>Update Shopping Cart</span></button>
                                 </div>
                             </div>
                         </div>

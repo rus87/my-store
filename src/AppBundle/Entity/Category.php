@@ -4,13 +4,14 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Category
  *
  * @ORM\Table(name="category")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
+
  */
 class Category
 {
@@ -32,6 +33,7 @@ class Category
 
     /**
      * @ORM\OneToMany(targetEntity="Product", mappedBy="category", fetch="LAZY")
+     * @Exclude
      */
     private $products;
 
@@ -45,11 +47,17 @@ class Category
      */
     private $parent;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Brand", mappedBy="categories")
+     * @Exclude
+     */
+    private $brands;
+
 
     public function __construct()
     {
         $this->products = new ArrayCollection();
-        $this->products = new ArrayCollection();
+        $this->brands = new ArrayCollection();
     }
 
 
@@ -86,28 +94,6 @@ class Category
         return $this->name;
     }
 
-    /**
-     * Set products
-     *
-     * @param \stdClass $products
-     * @return Category
-     */
-    public function setProducts($products)
-    {
-        $this->products = $products;
-
-        return $this;
-    }
-
-    /**
-     * Get products
-     *
-     * @return \stdClass 
-     */
-    public function getProducts()
-    {
-        return $this->products;
-    }
 
     /**
      * Add products
@@ -118,6 +104,7 @@ class Category
     public function addProduct(\AppBundle\Entity\Product $products)
     {
         $this->products[] = $products;
+
 
         return $this;
     }
@@ -197,5 +184,38 @@ class Category
     public function getParent()
     {
         return $this->parent;
+    }
+
+    /**
+     * Add brand
+     *
+     * @param \AppBundle\Entity\Brand $brand
+     *
+     * @return Category
+     */
+    public function addBrand(\AppBundle\Entity\Brand $brand)
+    {
+        $this->brands[] = $brand;
+        return $this;
+    }
+
+    /**
+     * Remove brand
+     *
+     * @param \AppBundle\Entity\Brand $brand
+     */
+    public function removeBrand(\AppBundle\Entity\Brand $brand)
+    {
+        $this->brands->removeElement($brand);
+    }
+
+    /**
+     * Get brands
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getBrands()
+    {
+        return $this->brands;
     }
 }

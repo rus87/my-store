@@ -37,9 +37,11 @@ class ProductCrudController extends Controller
         $form = $this->createForm($formClassName, $product, ['categories' => $catsChoice]);
         $form->handleRequest($request);
         if($form->isValid()){
-            dump($product);
             $category = $em->getRepository("AppBundle:Category")->findOneBy(['name' => $form['category']->getData()]);
             $product->setCategory($category);
+            $brand = $product->getBrand();
+            if(! $brand->getCategories()->contains($category))
+                $brand->addCategory($category);
             $files = [];
             foreach($product->getPhotos() as &$photo){
                 $files []= $photo->getName();

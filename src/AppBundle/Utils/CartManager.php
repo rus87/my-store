@@ -92,6 +92,7 @@ class CartManager
         $cart = $this->getCart();
         foreach($cart->getProducts() as $cartProduct)
             $cart->removeProduct($cartProduct);
+        $this->em->flush();
         return $cart;
     }
 }

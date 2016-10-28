@@ -9,7 +9,7 @@
         <div id="slider-range"></div>
     </div>
     <div class="gender_filter">
-        {{ form_label(filtersForm.gender) }}
+        <p>Gender:</p>
         <p>
             {{ form_widget(filtersForm.gender.0) }}
             {{ form_label(filtersForm.gender.0) }}
@@ -21,6 +21,15 @@
             {{ form_label(filtersForm.gender.2) }}
             {% do filtersForm.gender.setRendered %}
         </p>
+    </div>
+    <div class="brand_filter">
+        <p>Brand:</p>
+        {% for item in filtersForm.brand %}
+            <div>
+                {{ form_widget(item) }}
+                {{ form_label(item) }}
+            </div>
+        {% endfor %}
     </div>
     {% block other_fields %}
     {% endblock %}

@@ -55,8 +55,10 @@ abstract class Product
     protected $description;
 
     /**
-     * @var string
-     * @ORM\Column(name="brand", type="string", length=50)
+     * @ORM\ManyToOne(targetEntity="Brand", inversedBy="products")
+     * @ORM\JoinColumn(name="brand_id", referencedColumnName="id")
+     * @Assert\Valid()
+     * @MaxDepth(1)
      */
     protected $brand;
 
@@ -222,6 +224,7 @@ abstract class Product
     {
         return $this->description;
     }
+
 
     /**
      * Set gender
@@ -483,4 +486,15 @@ abstract class Product
         if($this->booking == null) return false;
         return true;
     }
+
+    public function getPhotosDirectory()
+    {
+        return "img/Products/".$this->getId();
+    }
+
+    public static function getAvailableFilters()
+    {
+        return ['priceMin', 'priceMax', 'gender'];
+    }
+
 }

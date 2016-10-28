@@ -55,8 +55,10 @@ abstract class Product
     protected $description;
 
     /**
-     * @var string
-     * @ORM\Column(name="brand", type="string", length=50)
+     * @ORM\ManyToOne(targetEntity="Brand", inversedBy="products", fetch="EAGER")
+     * @ORM\JoinColumn(name="brand_id", referencedColumnName="id")
+     * @Assert\Valid()
+     * @MaxDepth(1)
      */
     protected $brand;
 
@@ -226,26 +228,26 @@ abstract class Product
     /**
      * Set brand
      *
-     * @param string $brand
+     * @param \AppBundle\Entity\Brand $brand
      *
      * @return Product
      */
-    public function setBrand($brand)
+    public function setBrand(\AppBundle\Entity\Brand $brand = null)
     {
         $this->brand = $brand;
-
         return $this;
     }
 
     /**
      * Get brand
      *
-     * @return string
+     * @return \AppBundle\Entity\Brand
      */
     public function getBrand()
     {
         return $this->brand;
     }
+
 
     /**
      * Set gender
@@ -515,7 +517,9 @@ abstract class Product
 
     public static function getAvailableFilters()
     {
-        return ['priceMin', 'priceMax', 'gender'];
+        return ['priceMin', 'priceMax', 'gender', 'brand'];
     }
+
+
 
 }

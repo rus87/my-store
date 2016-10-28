@@ -24,7 +24,8 @@ class CartController extends BaseController
         $this->setProductsCurrency($templateData['products'], $templateData['currency']);
         $templateData['categories'] = $this->getDoctrine()->getManager()->getRepository("AppBundle:Category")
             ->findBy(['parent' => null]);
-        $templateData['form'] = $this->createCurrencyForm('app_cart_showcart', [])->createView();
+        $templateData['form'] = $this->handleCurrencyForm($request, 'app_cart_showcart');
+        if($this->currencyRedirectResponse) return $this->currencyRedirectResponse;
         $templateData['searchForm'] = $this->handleSearchForm($request);
         if($this->searchRedirectResponse) return $this->searchRedirectResponse;
         return $this->render('Cart/cart.html.twig', $templateData);
@@ -32,11 +33,12 @@ class CartController extends BaseController
 
     /**
      * @param int $productId
+     * @param $_format
+     * @return JsonResponse|Response
      * @Route(
      *      path="/cart/remove/{productId}.{_format}",
      *      requirements = {"productId" : "\d+", "_format" : "html|json"},
      *      options={"expose" : "true"})
-     * @return Response|JsonResponse
      */
     public function removeProductAction($productId, $_format)
     {
@@ -68,6 +70,15 @@ class CartController extends BaseController
         if($_format == 'html') $this->redirectToRoute('app_cart_showcart');
         else return new JsonResponse($this->getJsonContentWithMiniPhoto());
 
+    }
+
+    /**
+     * @Route(path="/cart/clear")
+     */
+    public function clearAction()
+    {
+        $this->get('cart_manager')->clearCart();
+        return $this->redirectToRoute('app_cart_showcart');
     }
 
     /**

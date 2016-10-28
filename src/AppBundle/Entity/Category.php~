@@ -45,6 +45,12 @@ class Category
      */
     private $parent;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Brand", inversedBy="categories")
+     * @ORM\JoinTable(name="brands_categories")
+     */
+    private $brands;
+
 
     public function __construct()
     {
@@ -135,8 +141,67 @@ class Category
     public function getDisplayedName()
     {
         $displayedName = $this->getName();
-        if($displayedName{mb_strlen($displayedName) - 1} != 's')
+        if($displayedName[mb_strlen($displayedName) - 1] != 's')
             $displayedName = $displayedName.'s';
         return ucfirst($displayedName);
+    }
+
+    /**
+     * Add child
+     *
+     * @param \AppBundle\Entity\Category $child
+     *
+     * @return Category
+     */
+    public function addChild(\AppBundle\Entity\Category $child)
+    {
+        $this->children[] = $child;
+        $child->setParent($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove child
+     *
+     * @param \AppBundle\Entity\Category $child
+     */
+    public function removeChild(\AppBundle\Entity\Category $child)
+    {
+        $this->children->removeElement($child);
+    }
+
+    /**
+     * Get children
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
+     * Set parent
+     *
+     * @param \AppBundle\Entity\Category $parent
+     *
+     * @return Category
+     */
+    public function setParent(\AppBundle\Entity\Category $parent = null)
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * Get parent
+     *
+     * @return \AppBundle\Entity\Category
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
 }
