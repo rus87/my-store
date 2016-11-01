@@ -86,6 +86,7 @@ class ProductsController extends BaseController
      */
     public function showByCategoryAction(Request $request, $categoryName, $page = 1)
     {
+        //dump($this->get('cats_list_generator')->generateHtml());
         $filtersHandler = $this->get('filters_handler');
         $paginator = $this->get('app.product_paginator');
         $templateData['numPages'] = $paginator->countPagesByCategory($categoryName);
@@ -102,6 +103,7 @@ class ProductsController extends BaseController
         $crumbsData[] = new InputData('app_products_showbycategory', ['categoryName' => $categoryName]);
         $templateData['sidebarCats'] = $this->getSidebarCats();
         $templateData['currency'] = $this->get('currency_manager')->getClientCurrency();
+        $templateData['catsHtmlList'] = $this->get('cats_list_generator')->generateHtml();
         $this->setProductsCurrency($templateData['products'], $templateData['currency']);
         $templateData['crumbs'] = $this->get('app.crumbs_generator')->make($crumbsData);
         $templateData['page']= $page;

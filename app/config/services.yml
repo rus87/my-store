@@ -37,3 +37,7 @@ services:
     filters_handler:
         class: AppBundle\Utils\Filters\FiltersHandler
         arguments: ['@request_stack', '@doctrine.orm.entity_manager', '@router', '@form.factory', '@currency_manager']
+
+    cats_list_generator:
+      class: AppBundle\Utils\CatsListGenerator
+      arguments: ['@router', '@doctrine.orm.entity_manager']

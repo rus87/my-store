@@ -3913,7 +3913,17 @@ h3.widget-title-modal {
     margin-bottom: 0;
 }
 
-.sidebar-category-list > ul
+.inner-cats
 {
+    display: none;
+}
 
+ul.level-1
+{
+    margin-left: 7px;
+}
+
+ul.level-2
+{
+    margin-left: 14px;
 }

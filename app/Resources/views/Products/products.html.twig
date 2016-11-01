@@ -29,11 +29,7 @@
                     <div class="sidebar-content">
                         <div class="section-title"><h2>Category</h2></div>
                         <div class="sidebar-category-list">
-                            <ul>
-                                {% for cat in sidebarCats %}
-                                    <li><a href="{{ cat.link }}">{{ cat.name }} ({{ cat.count }})</a></li>
-                                {% endfor %}
-                            </ul>
+                            {{ catsHtmlList | raw }}
                         </div>
                         <div class="section-title border-none"><h2>Filters</h2></div>
                         <div class="sidebar-category-list">
