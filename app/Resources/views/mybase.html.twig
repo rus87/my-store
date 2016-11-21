@@ -99,14 +99,23 @@
                                 </ul>
                             </div>
                             <div class="account-menu">
+                                {% set privateArea = 'Private Area' %}
+                                {% set user = user_manager.getCurrentUser %}
+                                {% if user != null %}
+                                     {% set privateArea = user.email %}
+                                {% endif %}
                                 <ul>
-                                    <li><a href="account.html">My Account <i class="fa fa-angle-down"></i></a>
+                                    <li><a href="account.html">{{ privateArea }} <i class="fa fa-angle-down"></i></a>
                                         <ul class="account-dropdown">
-                                            <li><a href="wishlist.html">My Wishlist</a></li>
+                                            <li><a href="{{ path('app_usercabinet_cabinet_showwishlist') }}">My Wishlist</a></li>
                                             <li><a href="{{ path('app_cart_showcart') }}">My Cart</a></li>
                                             <li><a href="{{ path('app_checkout_index') }}">Checkout</a></li>
-                                            <li><a href="blog.html">Blog</a></li>
-                                            <li><a href="account.html">Log In</a></li>
+                                            {% if user != null %}
+                                                <li><a href="{{ path('logout') }}">Log Out</a> </li>
+                                                {% else %}
+                                                    <li><a href="{{ path('app_security_register') }}">Registration</a></li>
+                                                    <li><a href="{{ path('app_security_login') }}">Log In</a></li>
+                                            {% endif %}
                                         </ul>
                                     </li>
                                 </ul>

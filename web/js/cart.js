@@ -10,8 +10,8 @@ $(document).ready(function(){
     $(document).on("click", ".add-to-cart", function(){
         var productId = $(this).parent().find('span:first').text();
         updateMiniCart('app_cart_addproduct', {productId: productId, _format: 'json'});
+        $('i.fa-shopping-cart',this).addClass('fa-icon-red');
     });
-
 
 
     function updateMiniCart(controllerActionPathName, pathParams)
@@ -26,26 +26,29 @@ $(document).ready(function(){
             success: function(response)
             {
                 var products = JSON.parse(response);
+                if(typeof products === 'object')
+                    products = Object.values(products);
                 console.log(products);
                 for(var i=0; i<products.length; i++ )
                 {
                     var productTpl = tpl;
                     $('.product-name', productTpl).html(products[i].title);
-                    $('.p-price', productTpl).html((products[i].price * products[i].currency.ratio).toFixed(2) +' '+ products[i].currency.name);
+                    $('.p-price', productTpl).html(products[i].price_disc +' '+ products[i].currency.name);
                     $('.cart-image img', productTpl).attr('src', products[i].mini_cart_photo_path);
                     $('.cart-image a', productTpl).attr('href', Routing.generate('app_product_show', {id: products[i].id}));
                     $('.cart-product-info .remove-product', productTpl).html(products[i].id);
                     outHtml += productTpl.html();
-                    totalPrice += products[i].price * products[i].currency.ratio;
+                    totalPrice += products[i].price_disc;
+                    //console.log(productTpl);
                 }
                 $('.cart-products-list').html(outHtml);
                 if(products[0])
-                    $('.price-amount span').html(totalPrice.toFixed(2) +' '+ products[0].currency.name);
+                    $('.price-amount span').html(totalPrice +' '+ products[0].currency.name);
                 else
                     $('.price-amount span').html(null);
 
                 $('.header-r-cart .cart span').html(products.length);
-                console.log(products);
+                //console.log(products);
                 $('.header-r-cart').css('display', 'block');
             }
         });

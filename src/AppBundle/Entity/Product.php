@@ -3,11 +3,12 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\MaxDepth;
-use AppBundle\Entity\Currency;
+use JMS\Serializer\Annotation\AccessType;
+
+
 
 /**
  * Product
@@ -21,6 +22,7 @@ use AppBundle\Entity\Currency;
  *     "sweater" = "AppBundle\Entity\Products\Sweater",
  *     "trousers" = "AppBundle\Entity\Products\Trousers",
  *     "blouse" = "AppBundle\Entity\Products\Blouse",})
+ *
  */
 abstract class Product
 {
@@ -44,6 +46,7 @@ abstract class Product
      * @var float
      *
      * @ORM\Column(name="price", type="float")
+     * @AccessType("public_method")
      */
     protected $price;
 
@@ -98,6 +101,7 @@ abstract class Product
 
     /**
      * @var string
+     * Needed for serialization
      */
     protected $miniCartPhotoPath;
 
@@ -120,6 +124,34 @@ abstract class Product
      * @var Currency
      */
     protected $currency;
+
+    /**
+     * @ORM\Column(name="discount", type="integer", nullable=true, options={"default": null})
+     * @Assert\Range(min = 0, max = 100)
+     */
+    protected $discount;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Wishlist", mappedBy="products")
+     */
+    protected $wishlists;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Comment")
+     */
+    protected $comment;
+
+    /**
+     * @var string
+     * Needed for serialization
+     */
+    public $wishlistThumbPath;
+
+    /**
+     * @var float
+     * Needed for serialization
+     */
+    public $priceDisc;
 
     public function __construct()
     {
@@ -192,13 +224,15 @@ abstract class Product
     /**
      * Get price
      *
-     * @return float 
+     * @param bool $withDiscount
+     * @return float
      */
-    public function getPrice()
+    public function getPrice($withDiscount = false)
     {
-        if(isset($this->currency))
-            return round($this->price * $this->currency->getRatio(), 2);
-        else return $this->price;
+        isset($this->currency) ? $price = round($this->price * $this->currency->getRatio(), 2) :
+            $price = $this->price;
+        if(($this->discount != null) && $withDiscount) $price -= round(($price / 100) * $this->discount, 2);
+        return $price;
     }
 
 
@@ -522,4 +556,87 @@ abstract class Product
 
 
 
+
+    /**
+     * Set discount
+     *
+     * @param integer $discount
+     *
+     * @return Product
+     */
+    public function setDiscount($discount)
+    {
+        $this->discount = $discount;
+
+        return $this;
+    }
+
+    /**
+     * Get discount
+     *
+     * @return integer
+     */
+    public function getDiscount()
+    {
+        return $this->discount;
+    }
+
+    /**
+     * Add wishlist
+     *
+     * @param \AppBundle\Entity\Wishlist $wishlist
+     *
+     * @return Product
+     */
+    public function addWishlist(\AppBundle\Entity\Wishlist $wishlist)
+    {
+        $this->wishlists[] = $wishlist;
+
+        return $this;
+    }
+
+    /**
+     * Remove wishlist
+     *
+     * @param \AppBundle\Entity\Wishlist $wishlist
+     */
+    public function removeWishlist(\AppBundle\Entity\Wishlist $wishlist)
+    {
+        $this->wishlists->removeElement($wishlist);
+    }
+
+    /**
+     * Get wishlists
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getWishlists()
+    {
+        return $this->wishlists;
+    }
+
+    /**
+     * Set comment
+     *
+     * @param \AppBundle\Entity\Comment $comment
+     *
+     * @return Product
+     */
+    public function setComment(\AppBundle\Entity\Comment $comment = null)
+    {
+        $this->comment = $comment;
+        $comment->setProduct($this);
+
+        return $this;
+    }
+
+    /**
+     * Get comment
+     *
+     * @return \AppBundle\Entity\Comment
+     */
+    public function getComment()
+    {
+        return $this->comment;
+    }
 }

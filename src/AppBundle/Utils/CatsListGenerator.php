@@ -45,7 +45,6 @@ class CatsListGenerator
                 $this->callback($cat);
                 if(! in_array($cat, $this->rootCats)){
                     $level++;
-                    dump($cat->getName().'is not a root cat');
                 }
                 $this->outputHtml .= "<ul class='inner-cats level-$level'>";
                 $this->recursiveIterator($cat->getChildren()->getValues(), $level);

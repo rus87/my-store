@@ -53,7 +53,10 @@ twig:
     strict_variables: "%kernel.debug%"
     globals:
         photos_directory: "%photo_folder_asset%"
-
+        cats_list_generator: "@cats_list_generator"
+        currency_manager: "@currency_manager"
+        user_manager: "@user_manager"
+        cart_manager: "@cart_manager"
 # Doctrine Configuration
 doctrine:
     dbal:
@@ -90,7 +93,7 @@ liip_imagine:
     resolvers:
         default:
             web_path:
-                web_root: '%kernel.root_dir%/../web'
+                web_root: '%kernel.root_dir%/../web/'
                 cache_prefix:  media/cache
 
     loaders:
@@ -152,3 +155,13 @@ liip_imagine:
             filters:
                 thumbnail: { size: [80, 100], mode: outlet}
 
+        resize_upload:
+            quality: 100
+            filters:
+                downscale:
+                    max: [1424, 2144]
+
+        wishlist_thumb:
+                    quality: 76
+                    filters:
+                        thumbnail: { size: [113, 113], mode: outlet}

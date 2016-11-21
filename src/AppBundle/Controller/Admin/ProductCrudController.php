@@ -37,38 +37,36 @@ class ProductCrudController extends Controller
         $form = $this->createForm($formClassName, $product, ['categories' => $catsChoice]);
         $form->handleRequest($request);
         if($form->isValid()){
+            $productManager = $this->get('product_manager');
             $category = $em->getRepository("AppBundle:Category")->findOneBy(['name' => $form['category']->getData()]);
             $product->setCategory($category);
             $brand = $product->getBrand();
             if(! $brand->getCategories()->contains($category))
                 $brand->addCategory($category);
-            $files = [];
-            foreach($product->getPhotos() as &$photo){
-                $files []= $photo->getName();
-                $photo->setName(md5(uniqid()).'.'.$photo->getName()->guessExtension());
+            $photosFiles = [];
+            foreach ($product->getPhotos() as $photo ) {
+                $photosFiles[] = $photo->getName();
+                $product->removePhoto($photo);
             }
             $mainPhoto1File = $product->getMainPhoto1()->getName();
             $mainPhoto2File = $product->getMainPhoto2()->getName();
-            $product->getMainPhoto1()->setName(md5(uniqid()).'.'.$product->getMainPhoto1()->getName()->guessExtension());
-            $product->getMainPhoto2()->setName(md5(uniqid()).'.'.$product->getMainPhoto2()->getName()->guessExtension());
-            $product->updatePhotosReferences();
+            $product->setMainPhoto1(null);
+            $product->setMainPhoto2(null);
             $em->persist($product);
             $em->flush();
-            for($i=0; $i<count($files); $i++){
-                $files[$i]->move($this->getParameter("photo_folder").'/'.$product->getId(),
-                    $product->getPhotos()[$i]->getName());
-            }
-            $mainPhoto1File->move($this->getParameter("photo_folder").'/'.$product->getId(),
-                $product->getMainPhoto1()->getName());
-            $mainPhoto2File->move($this->getParameter("photo_folder").'/'.$product->getId(),
-                $product->getMainPhoto2()->getName());
+            foreach($photosFiles as $file)
+                $productManager->addPhoto($product->getId(), $file);
+            $productManager->setMainPhoto($product->getId(), $mainPhoto1File, 1);
+            $productManager->setMainPhoto($product->getId(), $mainPhoto2File, 2);
             return $this->redirectToRoute('app_admin_productcrud_add', ['type' => $type]);
         }
+        dump($form->getErrors());
         return $this->render('Admin/ProductsAdd/'.ucfirst($type).'.html.twig',
             [
                 'form' => $form->createView(),
                 'navActive' => $navActive
             ]);
+
     }
 
 
@@ -80,7 +78,7 @@ class ProductCrudController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $catsRepo = $em->getRepository('AppBundle:Category');
-
+        $productManager = $this->get('product_manager');
 
         $productsRepo = $em->getRepository("AppBundle:Product");
         $product = $productsRepo->getById($id);
@@ -97,40 +95,18 @@ class ProductCrudController extends Controller
             $category = $em->getRepository("AppBundle:Category")->findOneBy(['name' => $form['category']->getData()]);
             $product->setCategory($category);
             foreach($product->getPhotos() as &$photo)
-                if($photo->isDelete()){
-                    $this->get('liip_imagine.cache.manager')->remove($photo->getPath());
-                    $em->remove($photo);
-                    unlink($photo->getPath());
-                }
+                if($photo->isDelete())
+                    $this->get('photo_manager')->remove($photo->getId());
             $file = $product->getNewPhoto()->getName();
-            if($file){
-                $photo = new Photo();
-                $photo->setProduct($product);
-                $photo->setName(md5(uniqid()).'.'.$file->guessExtension());
-                $product->addPhoto($photo);
-                $file->move($this->getParameter('photo_folder').'/'.$product->getId(), $photo->getName());
-            }
+            if($file)
+                $productManager->addPhoto($product->getId(), $file);
             if($form['mainPhoto1']->getData() != null){
                 $file = $form['mainPhoto1']->getData()->getName();
-                if($product->getMainPhoto1() != null){
-                    $this->get('liip_imagine.cache.manager')->remove($product->getMainPhoto1Path());
-                    unlink($product->getMainPhoto1Path());
-                    $em->remove($product->getMainPhoto1());
-                }
-                $product->setMainPhoto1(new Photo());
-                $product->getMainPhoto1()->setName(md5(uniqid()).'.'.$file->guessExtension());
-                $file->move($this->getParameter('photo_folder').'/'.$product->getId(), $product->getMainPhoto1()->getName());
+                $productManager->setMainPhoto($id, $file, 1);
             }
             if($form['mainPhoto2']->getData() != null){
                 $file = $form['mainPhoto2']->getData()->getName();
-                if($product->getMainPhoto2() != null){
-                    $this->get('liip_imagine.cache.manager')->remove($product->getMainPhoto2Path());
-                    unlink($product->getMainPhoto2Path());
-                    $em->remove($product->getMainPhoto2());
-                }
-                $product->setMainPhoto2(new Photo());
-                $product->getMainPhoto2()->setName(md5(uniqid()).'.'.$file->guessExtension());
-                $file->move($this->getParameter('photo_folder').'/'.$product->getId(), $product->getMainPhoto2()->getName());
+                $productManager->setMainPhoto($id, $file, 2);
             }
             $em->flush();
             return $this->redirectToRoute('app_admin_productcrud_update', ['id' => $product->getId()]);
@@ -175,14 +151,12 @@ class ProductCrudController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $catsRepo = $em->getRepository('AppBundle:Category');
-        $productsRepo = $em->getRepository('AppBundle:Product');
         $currentCat = $catsRepo->findOneBy(['name' => $categoryName]);
         $currentCatPath[] = $currentCat;
         $parents = $catsRepo->getAllParents($currentCat);
         if($parents)
             $currentCatPath = array_merge($currentCatPath, $parents);
         $currentCatPath = array_reverse($currentCatPath);
-        //$templateData['products'] = $productsRepo->getByCategory($currentCat);
         $templateData['products'] = $this->get('product_manager')->findByCategory($currentCat->getName());
         dump($currentCatPath);
         $templateData['currentCatPath'] = $currentCatPath;

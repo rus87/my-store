@@ -56,7 +56,7 @@ class ProductController extends BaseController
         if($this->currencyRedirectResponse) return $this->currencyRedirectResponse;
         $templateData['searchForm'] = $this->handleSearchForm($request);
         if($this->searchRedirectResponse) return $this->searchRedirectResponse;
-        return $this->render("product/$productClass.html.twig", $templateData);
+        return $this->render("Product/$productClass.html.twig", $templateData);
     }
 
 

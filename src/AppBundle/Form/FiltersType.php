@@ -43,8 +43,8 @@ class FiltersType extends AbstractType
 
     protected function getQb(EntityManager $em, $cat)
     {
-        $catRepo = $em->getRepository('AppBundle:Brand');
-        return $catRepo->createQueryBuilder('b')
+        $brandRepo = $em->getRepository('AppBundle:Brand');
+        return $brandRepo->createQueryBuilder('b')
             ->innerJoin('b.categories', 'c', 'WITH', 'c.name = :cat')
             ->setParameter('cat', ucfirst($cat))
             ->orderBy('b.title', 'ASC');

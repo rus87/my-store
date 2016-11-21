@@ -58,11 +58,13 @@
                                 {% endblock %}
                                 <p class="availability">Availability: <span>In stock</span></p>
                                 <div class="price-box">
-                                    <p class="old-price">
-                                        <span class="price">{{ product.price ~ ' ' ~ product.currency.name }}</span>
-                                    </p>
+                                    {% if product.discount != null %}
+                                        <p class="old-price">
+                                            <span class="price">{{ product.price ~ ' ' ~ product.currency.name }}</span>
+                                        </p>
+                                    {% endif %}
                                     <p class="special-price">
-                                        <span class="price">{{ product.price ~ ' ' ~ product.currency.name }}</span>
+                                        <span class="price">{{ product.price(true) ~ ' ' ~ product.currency.name }}</span>
                                     </p>
                                 </div>
                                 <div class="details-description">
@@ -374,7 +376,7 @@
                                         <h2 class="category-product-name"><a href="#">{{ product.title }}</a></h2>
                                         <div class="price-box">
                                             <p class="special-price">
-                                                <span class="price">{{ product.price ~ ' ' ~ product.currency.name }}</span>
+                                                <span class="price">{{ product.price(true) ~ ' ' ~ product.currency.name }}</span>
                                             </p>
                                         </div>
                                     </div>

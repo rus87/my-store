@@ -10,10 +10,76 @@ use AppBundle\Entity\Products\Jacket;
 use AppBundle\Entity\Products\Sweater;
 use AppBundle\Entity\Products\Trousers;
 use AppBundle\Entity\Products\Blouse;
+use AppBundle\Utils\ProductManager;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\File\File;
 
-class LoadFixtures implements FixtureInterface
+class LoadFixtures implements FixtureInterface, ContainerAwareInterface
 {
-    public function load(ObjectManager $manager)
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
+    public function load(ObjectManager $om)
+    {
+        $this->setRandomMainPhotosToAll('/home/rus/MY', $om);
+    }
+
+
+    private function setRandomMainPhotosToAll($photosDir, ObjectManager $om)
+    {
+        $productManager = $this->container->get('product_manager');
+        $productRepo = $om->getRepository('AppBundle:Product');
+
+        //$products = $productRepo->findBy([], null, 100, 1000);
+        $products = $this->getProductsWithSmallPhoto($om);
+        foreach($products as &$product){
+            $outStr = '';
+            $file = $this->getFile($photosDir);
+            $productManager->setMainPhoto($product->getId(), $file[0], 1);
+            $outStr .= $product->getId().': 1 => '.$file[1];
+            $file = $this->getFile($photosDir);
+            $productManager->setMainPhoto($product->getId(), $file[0], 2);
+            $outStr .= ', 2 => '.$file[1]."\n";
+            echo $outStr;
+        }
+    }
+
+    private function getFile($photosDir)
+    {
+        $fileNames = scandir($photosDir);
+        unset($fileNames[0]);
+        unset($fileNames[1]);
+        $file = null;
+        $name = null;
+        do $name = $fileNames[array_rand($fileNames)];
+        while ($name == 'used');
+        copy($photosDir.'/'.$name, $photosDir.'/used/'.$name);
+
+        return [new File($photosDir.'/used/'.$name), $name];
+    }
+
+    private function getProductsWithSmallPhoto(ObjectManager $objectManager)
+    {
+        $productsWithSmallPhoto2 = [];
+        $products = $objectManager->getRepository('AppBundle:Product')->findAll();
+        foreach($products as $product){
+            $photoParams = getimagesize($this->container->get('kernel')->getRootDir().'/../web/'.$product->getMainPhoto2Path());
+            if($photoParams[1] < 740)
+                $productsWithSmallPhoto2[] = $product;
+        }
+        return $productsWithSmallPhoto2;
+    }
+
+    private function setCategoryBrand(ObjectManager $manager)
     {
         $productRepo = $manager->getRepository('AppBundle:Product');
         $brandRepo = $manager->getRepository('AppBundle:Brand');
@@ -30,12 +96,6 @@ class LoadFixtures implements FixtureInterface
             $manager->persist($category);
         }
         $manager->flush();
-        /*$brand = $brandRepo->find(8);
-        $cat = $catRepo->find(5);
-        $brand->addCategory($cat);
-        $manager->persist($brand);
-        $manager->flush();
-        */
     }
 
     private function loadProducts(ObjectManager $manager)

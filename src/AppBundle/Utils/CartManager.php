@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Utils;
 
+
 use Symfony\Component\BrowserKit\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -8,29 +9,36 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Doctrine\ORM\EntityManager;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Cart;
-
+use Symfony\Component\Security\Core\User\User;
+use AppBundle\Utils\UserManager\UserManager;
 
 
 class CartManager
 {
     private $em;
+    private $um;
     private $requestStack;
 
-    public function __construct(EntityManager $em, RequestStack $requestStack)
+    public function __construct(EntityManager $em, RequestStack $requestStack, UserManager $um)
     {
         $this->em = $em;
         $this->requestStack = $requestStack;
+        $this->um = $um;
     }
 
+    /**
+     * @param $productId
+     * @return Cart
+     */
     public function removeProduct($productId)
     {
+        $cart = $this->getCart();
         $product = $this->em->getRepository("AppBundle:Product")->findOneById($productId);
         if (!$product)
             throw $this->createNotFoundException('Нет продукта с идом '.$productId);
-        $clientCartHash = $this->getClientCartHash();
-        $cart = $this->em->getRepository("AppBundle:Cart")->findOneBy(["hash" => $clientCartHash]);
         $cart->removeProduct($product);
         $this->em->flush();
+        return $cart;
     }
 
     public function getCartProducts()
@@ -40,13 +48,14 @@ class CartManager
 
     public function pullProduct(Product $product)
     {
+        $cart = $this->getCart();
         if(! $product->isReserved())
         {
-            $cart = $this->getCart();
             $cart->addProduct($product);
             $this->em->persist($cart);
             $this->em->flush();
         }
+        return $cart;
     }
 
     private function createCart()
@@ -74,12 +83,17 @@ class CartManager
      */
     public function getCart()
     {
-        $clientCartHash = $this->getClientCartHash();
-        $cart = $this->em->getRepository("AppBundle:Cart")->findOneBy(["hash" => $clientCartHash]);
-        if($cart == null){
-            $cart = $this->createCart();
-            $this->em->persist($cart);
-            $this->em->flush();
+        if(($user = $this->um->getCurrentUser()) != null){
+            $cart = $user->getCart();
+        }
+        else{
+            $clientCartHash = $this->getClientCartHash();
+            $cart = $this->em->getRepository("AppBundle:Cart")->findOneBy(["hash" => $clientCartHash]);
+            if($cart == null){
+                $cart = $this->createCart();
+                $this->em->persist($cart);
+                $this->em->flush();
+            }
         }
         return $cart;
     }
@@ -95,4 +109,23 @@ class CartManager
         $this->em->flush();
         return $cart;
     }
+
+    /**
+     * @param $id
+     * @return bool
+     */
+    public function toggleProduct($id)
+    {
+        $product = $this->em->getRepository("AppBundle:Product")->findOneById($id);
+        if (!$product)
+            throw $this->createNotFoundException('Нет продукта с идом '.$id);
+        $cart = $this->getCart();
+        $success = true;
+        if($cart->getProducts()->contains($product))
+            $success = !$this->removeProduct($id)->getProducts()->contains($product);
+        else
+            $success = $this->pullProduct($product)->getProducts()->contains($product);
+        return $success;
+    }
+
 }

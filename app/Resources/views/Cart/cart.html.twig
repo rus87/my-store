@@ -29,11 +29,11 @@
                                 {% for product in products %}
                                     <tr>
                                         <td class="p-image">
-                                            <a href=""><img alt="" src="{{ (product.getMainPhoto1Path)|imagine_filter('cart_thumb') }}" class="floatleft"></a>
+                                            <a href="{{ path('app_product_show', {'id': product.id}) }}"><img alt="" src="{{ (product.getMainPhoto1Path)|imagine_filter('cart_thumb') }}" class="floatleft"></a>
                                         </td>
-                                        <td class="p-name"><a href="">{{ product.title }}</a></td>
+                                        <td class="p-name"><a href="{{ path('app_product_show', {'id': product.id}) }}">{{ product.title }}</a></td>
                                         <td class="edit"><a href="">Edit</a></td>
-                                        <td class="p-amount">{{ product.price ~ ' ' ~ product.currency.name }}</td>
+                                        <td class="p-amount">{{ product.price(true) ~ ' ' ~ product.currency.name }}</td>
                                         <td class="p-action"><a href="{{ path('app_cart_removeproduct', {'productId': product.id, '_format': 'html'}) }}"><i class="fa fa-times"></i></a></td>
                                     </tr>
                                 {% endfor %}

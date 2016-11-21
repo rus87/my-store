@@ -127,7 +127,9 @@ class Photo
 
     public function getPath()
     {
-        return "img/Products/".$this->getProduct()->getId()."/".$this->getName();
+        $product = $this->getProduct();
+        $product ? $path = "img/Products/".$this->getProduct()->getId()."/".$this->getName() : $path = null;
+        return $path;
     }
 
     /**

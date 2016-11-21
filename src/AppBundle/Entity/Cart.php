@@ -38,6 +38,11 @@ class Cart
      */
     private $products;
 
+    /**
+     * @ORM\OneToOne(targetEntity="User", mappedBy="cart")
+     */
+    private $user;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -130,5 +135,29 @@ class Cart
         if($this->getProducts()->isEmpty())
             return true;
         return false;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \AppBundle\Entity\User $user
+     *
+     * @return Cart
+     */
+    public function setUser(\AppBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

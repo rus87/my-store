@@ -19,6 +19,7 @@ class CartController extends BaseController
     public function showCartAction(Request $request)
     {
         $cartManager = $this->get("cart_manager");
+        //dump($cartManager->getCart());
         $templateData['products'] = $cartManager->getCartProducts();
         $templateData['currency'] = $this->get('currency_manager')->getClientCurrency();
         $this->setProductsCurrency($templateData['products'], $templateData['currency']);
@@ -67,7 +68,7 @@ class CartController extends BaseController
         catch(UniqueConstraintViolationException $e){
             return new Response("Already in cart!");
         }
-        if($_format == 'html') $this->redirectToRoute('app_cart_showcart');
+        if($_format == 'html') return $this->redirectToRoute('app_cart_showcart');
         else return new JsonResponse($this->getJsonContentWithMiniPhoto());
 
     }
@@ -105,6 +106,7 @@ class CartController extends BaseController
                 $miniCartPhotoPath = $this->get('liip_imagine.cache.manager')
                     ->getBrowserPath($product->getMainPhoto1Path(), 'mini_cart_thumb');
                 $product->setMiniCartPhotoPath($miniCartPhotoPath);
+                $product->priceDisc = $product->getPrice(true);
             }
             return $this->get('jms_serializer')
                 ->serialize($products, "json", SerializationContext::create()->enableMaxDepthChecks());

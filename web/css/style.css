@@ -895,15 +895,23 @@ a.remove-product {
     position: relative;
 }
 .new-product-label, .sale-product-label {
+    position: absolute;
     background-color: #e03550;
     color: #ffffff;
     font-size: 13px;
-    left: 15px;
+    right: 18px;
     padding: 2px 10px;
-    position: absolute;
     text-transform: uppercase;
-    top: 15px;
+    top: 55px;
     z-index: 10;
+}
+
+.sale-icon{
+    position: absolute;
+    right: 11px;
+    padding: 2px 10px;
+    top: -2px;
+    z-index: 12;
 }
 .new-product-label {
     background: #ffffff none repeat scroll 0 0;
@@ -2407,7 +2415,8 @@ span.required {
     text-align: center;
     width: 3em;
 }
-.cart-main-area .cart-table .p-action > a, .wishlist-concept .p-action > a {
+.cart-main-area .cart-table .p-action > a, .wishlist-concept .p-action > a
+{
     background: rgba(0, 0, 0, 0) url("../img/icon/delete.png") no-repeat scroll 0 0;
     display: block;
     font-size: 0;
@@ -2679,7 +2688,7 @@ h3.login-title {
     border: 1px solid #f2f2f2;
     margin-bottom: 20px
 }
-.login-form, .form input {
+.form input:not(.checkbox) {
     border: 1px solid #f2f2f2;
     clear: both;
     display: block;
@@ -2698,7 +2707,7 @@ h3.login-title {
     margin-bottom: 0;
     padding-bottom: 5px;
 }
-.login-form p span, .form p span {
+.login-form p span, .form p span, .reg-form span {
     color: #eb340a;
     padding-left: 2px;
 }
@@ -3900,30 +3909,32 @@ h3.widget-title-modal {
 }
 
 .filters .gender_filter, .filters .price_filter,
-.filters .sleeveLength_filter, .filters .brand_filter
-{
+.filters .sleeveLength_filter, .filters .brand_filter {
     padding: 10px;
     margin-right: 5px;
     margin-top: 5px;
 }
 
-.filters input[type="checkbox"], .filters input[type="radio"], .filters label
-{
+.filters input[type="checkbox"], .filters input[type="radio"], .filters label {
     margin-top: 0;
     margin-bottom: 0;
 }
 
-.inner-cats
-{
+.inner-cats {
     display: none;
 }
 
-ul.level-1
-{
+ul.level-1 {
     margin-left: 7px;
 }
 
-ul.level-2
-{
+ul.level-2 {
     margin-left: 14px;
 }
+
+.reg-form button.button{
+    margin-top: 10px;
+}
+
+.fa-icon-red{color: #e03550;}
+

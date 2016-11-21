@@ -29,7 +29,7 @@
                     <div class="sidebar-content">
                         <div class="section-title"><h2>Category</h2></div>
                         <div class="sidebar-category-list">
-                            {{ catsHtmlList | raw }}
+                            {{ cats_list_generator.generateHtml | raw }}
                         </div>
                         <div class="section-title border-none"><h2>Filters</h2></div>
                         <div class="sidebar-category-list">
@@ -89,30 +89,29 @@
                                 {% for product in products %}
                                     <div class="col-md-4 col-sm-4">
                                         <div class="single-product-item">
-                                            <div class="sale-product-label"><span>sale</span></div>
+                                            {% if product.discount != null %}
+                                                <div class="sale-product-label"><span>{{ product.discount ~ '% off' }}</span></div>
+                                                <img class="sale-icon" src="{{ asset('img/icon/sale-label.png') }}">
+                                            {% endif %}
                                             <div class="single-product clearfix">
                                                 <a href="{{ path('app_product_show', {'id': product.getId}) }}">
                                                     <span class="product-image">
-                                                        {% if product.mainPhoto1 %}
-                                                            <img src="{{ (product.getMainPhoto1Path)|imagine_filter('shop_main_thumb') }}" alt="">
-                                                            {% else %}
-                                                            <img src="{{ ('img/dummy-product-1.jpg')|imagine_filter('shop_main_thumb') }}" alt="">
-                                                        {% endif %}
+                                                        <img src="{{ (product.getMainPhoto1Path)|imagine_filter('shop_main_thumb') }}" alt="">
                                                     </span>
                                                     <span class="product-image hover-image">
-                                                        {% if product.mainPhoto1 %}
-                                                            <img src="{{ (product.getMainPhoto2Path)|imagine_filter('shop_main_thumb') }}" alt="">
-                                                            {% else %}
-                                                            <img src="{{ ('img/dummy-product-2.jpg')|imagine_filter('shop_main_thumb') }}" alt="">
-                                                        {% endif %}
+                                                        <img src="{{ (product.getMainPhoto2Path)|imagine_filter('shop_main_thumb') }}" alt="">
                                                     </span>
                                                 </a>
                                                 <div class="button-actions clearfix">
                                                     <span class="product-id" hidden="hidden">{{ product.Id }}</span>
                                                     <p class="product-description" hidden="hidden">{{ product.description }}</p>
                                                     {% if product.isReserved == false %}
+                                                        {% set alreadyInCartClass = '' %}
+                                                        {% if cart_manager.getCart.getProducts.contains(product) %}
+                                                            {% set alreadyInCartClass = 'fa-icon-red' %}
+                                                        {% endif %}
                                                         <button class="button add-to-cart" type="button">
-                                                            <span><i class="fa fa-shopping-cart"></i></span>
+                                                            <span><i class="fa fa-shopping-cart {{ alreadyInCartClass }}"></i></span>
                                                         </button>
                                                     {% endif %}
                                                     <ul class="add-to-links">
@@ -122,24 +121,32 @@
                                                             </a>
                                                         </li>
                                                         <li>
-                                                            <a class="link-wishlist" href="wishlist.html">
-                                                                <i class="fa fa-heart"></i>
-                                                            </a>
-                                                        </li>																													<li>
-                                                            <a class="link-compare" href="#">
-                                                                <i class="fa fa-retweet"></i>
-                                                            </a>
+                                                            {% set alreadyAddedClass = null %}
+                                                            {% set user = user_manager.getCurrentUser %}
+                                                            {% if user != null %}
+                                                                {% set wishlist = user_manager.getCurrentUser.getWishlist %}
+                                                                {% if wishlist != null %}
+                                                                    {% if wishlist.getProducts.contains(product) %}
+                                                                        {% set alreadyAddedClass = 'fa-icon-red' %}
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                            <button class="button link-wishlist" type="button">
+                                                                <span><i class="fa fa-heart {{ alreadyAddedClass }}"></i></span>
+                                                            </button>
                                                         </li>
                                                     </ul>
                                                 </div>
                                             </div>
                                             <h2 class="single-product-name"><a href="{{ path('app_product_show', {'id': product.getId}) }}">{{ product.title }}</a></h2>
                                             <div class="price-box">
-                                                <p class="old-price">
-                                                    <span class="price">{{ product.price ~ ' ' ~ product.currency.name }}</span>
-                                                </p>
+                                                {% if product.discount != null %}
+                                                    <p class="old-price">
+                                                        <span class="price">{{ product.price ~ ' ' ~ product.currency.name }}</span>
+                                                    </p>
+                                                {% endif %}
                                                 <p class="special-price">
-                                                    <span class="price">{{ product.price ~ ' ' ~ product.currency.name  }}</span>
+                                                    <span class="price">{{ product.price(true) ~ ' ' ~ product.currency.name  }}</span>
                                                 </p>
                                             </div>
                                         </div>
@@ -202,9 +209,6 @@
                                 <a href="product-details.html" class="see-all">See all features</a>
                                 <div class="quick-add-to-cart">
                                     <form method="post" class="cart">
-                                        <div class="numbers-row">
-                                            <input type="number" id="french-hens" value="3">
-                                        </div>
                                         <button class="single_add_to_cart_button" type="submit">Add to cart</button>
                                     </form>
                                 </div>
@@ -240,4 +244,5 @@
     <script src="{{ asset("js/Products/jquery-ui.min.js") }}" type="text/javascript"></script>
     <script src="{{ asset("js/Products/price-slider.js") }}" type="text/javascript"></script>
     <script src="{{ asset("js/Products/categories.js") }}" type="text/javascript"></script>
+    <script src="{{ asset("js/Products/AddToWishlist.js") }}" type="text/javascript"></script>
 {% endblock %}

@@ -21,6 +21,7 @@ class ProductType extends AbstractType
             ->add('price')
             ->add('brand')
             ->add('description')
+            ->add('discount')
             ->add('gender', ChoiceType::class, ['choices' => ['Male' => 'male', 'Female' => 'female']])
             ->add('brand', EntityType::class, ['class' => 'AppBundle:Brand', 'choice_label' => 'title'])
             ->add('category', ChoiceType::class, ['mapped' => false, 'choices' => $options['categories']]);

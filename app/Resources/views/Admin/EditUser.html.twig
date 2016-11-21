@@ -1,0 +1,29 @@
+{% extends 'Admin/AdminBase.html.twig' %}
+{% block child_content %}
+    <h1>Edit user</h1>
+    <div class="container">
+        {{ form_start(form) }}
+
+        <div class="form-group">
+            {{ form_label(form.email) }}:
+            {{ form_widget(form.email) }}
+            {{ form_errors(form.email) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.role) }}:
+            {{ form_widget(form.role) }}
+        </div>
+
+        <div class="form-group">
+            {% if form.cart is defined %}
+                {{ form_label(form.cart) }}:
+                {{ form_widget(form.cart) }}
+            {% endif %}<strong>Cart: </strong>{{ user.cart.id }}
+        </div>
+
+        <p></p>
+        <button type="submit" class="btn"><span>Save</span></button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

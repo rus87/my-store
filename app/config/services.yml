@@ -11,7 +11,7 @@ services:
 
     cart_manager:
         class: AppBundle\Utils\CartManager
-        arguments: ['@doctrine.orm.entity_manager', '@request_stack']
+        arguments: ['@doctrine.orm.entity_manager', '@request_stack', '@user_manager']
 
     currency_manager:
             class: AppBundle\Utils\CurrencyManager
@@ -32,7 +32,7 @@ services:
 
     product_manager:
         class: AppBundle\Utils\ProductManager
-        arguments: ['@request_stack', '@doctrine.orm.entity_manager', '@currency_manager', '@filters_handler']
+        arguments: ['@request_stack', '@doctrine.orm.entity_manager', '@currency_manager', '@filters_handler', '@photo_manager']
 
     filters_handler:
         class: AppBundle\Utils\Filters\FiltersHandler
@@ -41,3 +41,11 @@ services:
     cats_list_generator:
       class: AppBundle\Utils\CatsListGenerator
       arguments: ['@router', '@doctrine.orm.entity_manager']
+
+    photo_manager:
+        class: AppBundle\Utils\PhotoManager
+        arguments: ['@doctrine.orm.entity_manager', '@liip_imagine.filter.manager', '@liip_imagine.data.manager', '@liip_imagine.cache.manager', '%kernel.root_dir%']
+
+    user_manager:
+        class: AppBundle\Utils\UserManager\UserManager
+        arguments: ['@doctrine.orm.entity_manager', '@security.authorization_checker', '@security.token_storage']

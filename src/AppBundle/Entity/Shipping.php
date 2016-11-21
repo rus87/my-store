@@ -71,6 +71,11 @@ class Shipping
      */
     private $bookings;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="shippings")
+     */
+    private $user;
+
 
     /**
      * Get id
@@ -266,5 +271,29 @@ class Shipping
     public function getBookings()
     {
         return $this->bookings;
+    }
+
+    /**
+     * Set user
+     *
+     * @param string $user
+     *
+     * @return Shipping
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return string
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

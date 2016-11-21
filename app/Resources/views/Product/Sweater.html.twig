@@ -1,8 +1,10 @@
 {% extends 'Product/product.html.twig' %}
+
+{% block unique_properties %}
+    <p><strong>Sleeve length: </strong>{{ product.sleeveLength }}</p>
+    <p><strong>Composition: </strong>{{ product.composition }}</p>
+{% endblock %}
+
 {% block child_content %}
     {{ parent() }}
-    {% block unique_properties %}
-        <p><strong>Sleeve length: </strong>{{ product.sleeveLength }}</p>
-        <p><strong>Composition: </strong>{{ product.composition }}</p>
-    {% endblock %}
 {% endblock %}
