@@ -18,6 +18,10 @@ class WishlistManager
      */
     private $user;
 
+    /**
+     * @param EntityManager $em
+     * @param User $user
+     */
     public function __construct(EntityManager $em, User $user)
     {
         $this->em = $em;
@@ -83,4 +87,5 @@ class WishlistManager
         $this->em->flush();
         return $this->user->getWishlist();
     }
+
 }

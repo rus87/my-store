@@ -43,7 +43,10 @@ class CartController extends BaseController
      */
     public function removeProductAction($productId, $_format)
     {
-        $this->get("cart_manager")->removeProduct($productId);
+        $product = $this->getDoctrine()->getRepository("AppBundle:Product")->find($productId);
+        if (!$product)
+            throw $this->createNotFoundException('Нет продукта с идом '.$productId);
+        $this->get("cart_manager")->removeProduct($product);
 
         if($_format == "json") return new JsonResponse($this->getJsonContentWithMiniPhoto());
         elseif($_format == "html") return $this->redirectToRoute('app_cart_showcart');
@@ -59,7 +62,7 @@ class CartController extends BaseController
      */
     public function addProductAction($productId, $_format)
     {
-        $product = $this->getDoctrine()->getManager()->getRepository("AppBundle:Product")->findOneById($productId);
+        $product = $this->getDoctrine()->getManager()->getRepository("AppBundle:Product")->find($productId);
         if (!$product)
             throw $this->createNotFoundException('Нет продукта с идом '.$productId);
         try{
@@ -70,7 +73,32 @@ class CartController extends BaseController
         }
         if($_format == 'html') return $this->redirectToRoute('app_cart_showcart');
         else return new JsonResponse($this->getJsonContentWithMiniPhoto());
+    }
 
+    /**
+     * @Route(
+     *      path="/cart/toggle/{id}",
+     *      requirements = {"id" : "\d+"},
+     *      options={"expose" : "true"})
+     * @return JsonResponse
+     */
+    public function toggleProductAction($id)
+    {
+        $product = $this->getDoctrine()->getRepository("AppBundle:Product")->find($id);
+        if (!$product)
+            throw $this->createNotFoundException('Нет продукта с идом '.$id);
+        $cart = $this->get('cart_manager')->toggleProduct($product);
+        $this->setProductsCurrency($cart->getProducts(), $this->get('currency_manager')->getClientCurrency());
+        foreach ($cart->getProducts() as &$product) {
+            $miniCartPhotoPath = $this->get('liip_imagine.cache.manager')
+                ->getBrowserPath($product->getMainPhoto1Path(), 'mini_cart_thumb');
+            $product->setMiniCartPhotoPath($miniCartPhotoPath);
+            $product->priceDisc = $product->getPrice(true);
+        }
+
+        $productsJson = $this->get('jms_serializer')
+            ->serialize($cart->getProducts(), 'json', SerializationContext::create()->enableMaxDepthChecks());
+        return new JsonResponse($productsJson);
     }
 
     /**

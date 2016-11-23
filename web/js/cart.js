@@ -9,8 +9,11 @@ $(document).ready(function(){
 
     $(document).on("click", ".add-to-cart", function(){
         var productId = $(this).parent().find('span:first').text();
-        updateMiniCart('app_cart_addproduct', {productId: productId, _format: 'json'});
-        $('i.fa-shopping-cart',this).addClass('fa-icon-red');
+        updateMiniCart('app_cart_toggleproduct', {id: productId});
+        if($('i.fa-shopping-cart',this).hasClass('fa-icon-red'))
+            $('i.fa-shopping-cart',this).removeClass('fa-icon-red');
+        else
+            $('i.fa-shopping-cart',this).addClass('fa-icon-red');
     });
 
 
@@ -43,7 +46,7 @@ $(document).ready(function(){
                 }
                 $('.cart-products-list').html(outHtml);
                 if(products[0])
-                    $('.price-amount span').html(totalPrice +' '+ products[0].currency.name);
+                    $('.price-amount span').html(totalPrice.toFixed(2) +' '+ products[0].currency.name);
                 else
                     $('.price-amount span').html(null);
 

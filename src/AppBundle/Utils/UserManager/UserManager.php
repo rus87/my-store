@@ -42,13 +42,21 @@ class UserManager
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function addProductToWishlist($product)
+    /**
+     * @param $product
+     * @return User|null
+     */
+    public function addProductToWishlist(Product $product)
     {
         $this->wishlistManager = new WishlistManager($this->em, $this->getCurrentUser());
         return $this->wishlistManager->addProduct($product);
     }
 
-    public function removeProductFromWishlist($product)
+    /**
+     * @param $product
+     * @return User|null
+     */
+    public function removeProductFromWishlist(Product $product)
     {
         $this->wishlistManager = new WishlistManager($this->em, $this->getCurrentUser());
         return $this->wishlistManager->removeProduct($product);
@@ -58,7 +66,7 @@ class UserManager
      * @param $product
      * @return User
      */
-    public function toggleProductInWishlist($product)
+    public function toggleProductInWishlist(Product $product)
     {
         $this->wishlistManager = new WishlistManager($this->em, $this->getCurrentUser());
         return $this->wishlistManager->toggleProduct($product);

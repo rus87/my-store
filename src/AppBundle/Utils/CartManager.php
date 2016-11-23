@@ -27,25 +27,21 @@ class CartManager
     }
 
     /**
-     * @param $productId
+     * @param Product $product
      * @return Cart
      */
-    public function removeProduct($productId)
+    public function removeProduct(Product $product)
     {
         $cart = $this->getCart();
-        $product = $this->em->getRepository("AppBundle:Product")->findOneById($productId);
-        if (!$product)
-            throw $this->createNotFoundException('Нет продукта с идом '.$productId);
         $cart->removeProduct($product);
         $this->em->flush();
         return $cart;
     }
 
-    public function getCartProducts()
-    {
-        return $this->getCart()->getProducts();
-    }
-
+    /**
+     * @param Product $product
+     * @return Cart
+     */
     public function pullProduct(Product $product)
     {
         $cart = $this->getCart();
@@ -58,6 +54,17 @@ class CartManager
         return $cart;
     }
 
+    /**
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCartProducts()
+    {
+        return $this->getCart()->getProducts();
+    }
+
+    /**
+     * @return Cart
+     */
     private function createCart()
     {
         $cart = new Cart();
@@ -111,21 +118,17 @@ class CartManager
     }
 
     /**
-     * @param $id
-     * @return bool
+     * @param Product $product
+     * @return Cart
      */
-    public function toggleProduct($id)
+    public function toggleProduct(Product $product)
     {
-        $product = $this->em->getRepository("AppBundle:Product")->findOneById($id);
-        if (!$product)
-            throw $this->createNotFoundException('Нет продукта с идом '.$id);
         $cart = $this->getCart();
-        $success = true;
         if($cart->getProducts()->contains($product))
-            $success = !$this->removeProduct($id)->getProducts()->contains($product);
+            $this->removeProduct($product);
         else
-            $success = $this->pullProduct($product)->getProducts()->contains($product);
-        return $success;
+            $this->pullProduct($product);
+        return $cart;
     }
 
 }

@@ -2,8 +2,8 @@ $(document).ready(function(){
 
     $(document).on("click", ".add-to-cart", function(){
         var productId = $(this).parent().find('span.product-id:first').text();
-        refreshWishlist('app_usercabinet_cabinet_updatewishlist',
-            {productId: productId, _format: 'json', action: 'remove'});
+        refreshWishlist('app_usercabinet_cabinet_wishlistupdate',
+            {id: productId, action: 'remove'});
 
     });
 
@@ -11,8 +11,7 @@ $(document).ready(function(){
         e.preventDefault();
         e.stopImmediatePropagation();
         var productId = $(this).parent().parent().find('span.product-id:first').text();
-        refreshWishlist('app_usercabinet_cabinet_updatewishlist',
-            {productId: productId, _format: 'json', action: 'remove'});
+        refreshWishlist('app_usercabinet_cabinet_wishlistupdate', {id: productId, action: 'remove'});
     });
 
 });
@@ -46,8 +45,8 @@ function refreshWishlist(routeName, params)
                     $('p.description', prototype).html(products[i].description);
                     $('div.price-box span.special-price', prototype).html(products[i].price_disc +' '+ products[i].currency.name);
                     $('span.product-id', prototype).html(products[i].id);
-                    var removeLink = Routing.generate('app_usercabinet_cabinet_updatewishlist',
-                        {'productId': products[i].id, '_format': 'html', 'action': 'remove'});
+                    var removeLink = Routing.generate('app_usercabinet_cabinet_wishlistupdate',
+                        {'id': products[i].id, 'action': 'remove'});
                     $('td.p-action a').attr('href', removeLink);
                     outHtml += '<tr class="product-row">' + prototype.html() + '</tr>';
                     //console.log(prototype.html());

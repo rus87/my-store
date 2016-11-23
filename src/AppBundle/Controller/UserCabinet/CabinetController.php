@@ -41,24 +41,46 @@ class CabinetController extends BaseController
     /**
      * @Security("has_role('ROLE_USER')")
      * @Route(
-     *      path="/cabinet/wishlist/toggle-product/{id}",
+     *      path="/cabinet/wishlist/update/{action}/{id}",
      *      requirements={"id" : "\d+"},
      *      options={"expose" : "true"})
      * @return JsonResponse
      */
-    public function wishlistProductToggleAction($id)
+    public function wishlistUpdateAction($id = null, $action = null )
     {
-        $product = $this->getDoctrine()->getManager()->getRepository("AppBundle:Product")->find($id);
-        if(!$product)
-            throw new NotFoundHttpException(sprintf('No product with id=$d', $id));
-        $wishlist = $this->get('user_manager')->toggleProductInWishlist($product)->getWishlist();
-        foreach ($wishlist->getProducts() as &$product) {
-            $product->wishlistThumbPath = $this->get('liip_imagine.cache.manager')
-                ->getBrowserPath($product->getMainPhoto1Path(), 'wishlist_thumb');
-            $product->priceDisc = $product->getPrice(true);
+        $userManager = $this->get('user_manager');
+        if($id){
+            $product = $this->getDoctrine()->getManager()->getRepository("AppBundle:Product")->find($id);
+            if(!$product)
+                throw new NotFoundHttpException(sprintf('No product with id=$d', $id));
         }
-        $productsJson = $this->get('jms_serializer')
-            ->serialize($wishlist->getProducts(), 'json', SerializationContext::create()->enableMaxDepthChecks());
-        return new JsonResponse($productsJson);
+        else
+            $action = 'get';
+
+        if($action == 'toggle')
+            $wishlist = $userManager->toggleProductInWishlist($product)->getWishlist();
+        elseif($action == 'add')
+            $wishlist = $userManager->addProductToWishlist($product)->getWishlist();
+        elseif($action == 'remove')
+            $wishlist = $userManager->removeProductFromWishlist($product)->getWishlist();
+        else
+            $wishlist = $userManager->getCurrentUser()->getWishlist();
+        if($wishlist){
+            $this->setProductsCurrency($wishlist->getProducts(), $this->get('currency_manager')->getClientCurrency());
+            foreach ($wishlist->getProducts() as &$product) {
+                $product->wishlistThumbPath = $this->get('liip_imagine.cache.manager')
+                    ->getBrowserPath($product->getMainPhoto1Path(), 'wishlist_thumb');
+                $product->priceDisc = $product->getPrice(true);
+            }
+
+            $productsJson = $this->get('jms_serializer')
+                ->serialize($wishlist->getProducts(), 'json', SerializationContext::create()->enableMaxDepthChecks());
+            $response = new JsonResponse($productsJson);
+        }
+        else
+            $response = new JsonResponse('null');
+        return $response;
     }
+
+
 }

@@ -38,7 +38,7 @@
                             </div>
                         </td>
                         <td class="p-action">
-                            <a href="{{ path('app_usercabinet_cabinet_updatewishlist', {'productId': product.id, '_format': 'json', 'action': 'remove'}) }}" class="remove-from-wl"></a>
+                            <a href="{{ path('app_usercabinet_cabinet_wishlistupdate', {id: product.id, action: 'remove'}) }}" class="remove-from-wl"></a>
                         </td>
                     </tr>
                 {% endfor %}

@@ -6,9 +6,9 @@ $(document).ready(function() {
 
         $.ajax({
             method: "POST",
-            url: Routing.generate('app_usercabinet_cabinet_wishlistproducttoggle', {id: productId}),
+            url: Routing.generate('app_usercabinet_cabinet_wishlistupdate', {id: productId, action: 'toggle'}),
             success: function(response){
-                console.log(response);
+                //console.log(response);
             }
         });
         if($('i.fa-heart',this).hasClass('fa-icon-red'))
