@@ -13,7 +13,7 @@
             </div>
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12">
-                    {% if products is defined %}
+                    {% if cart.products is not empty  %}
                         <div class="cart-table table-responsive">
                             <table>
                                 <thead>
@@ -26,7 +26,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for product in products %}
+                                {% for product in cart.products %}
                                     <tr>
                                         <td class="p-image">
                                             <a href="{{ path('app_product_show', {'id': product.id}) }}"><img alt="" src="{{ (product.getMainPhoto1Path)|imagine_filter('cart_thumb') }}" class="floatleft"></a>
@@ -48,88 +48,10 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
-                                <div class="shipping-discount">
-                                    <div class="shipping-title">
-                                        <h3>Estimate Shipping And Tax</h3>
-                                    </div>
-                                    <p>Enter your destination to get shipping &amp; tax</p>
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-6">
-                                            <div class="level">
-                                                Country <span class="required">*</span>
-                                            </div>
-                                            <div class=" shipping-wrapper">
-                                                <select class="country">
-                                                    <option value="state">Select options</option>
-                                                    <option value="state">Bahasa Indonesia</option>
-                                                    <option value="state">Bahasa Melayu</option>
-                                                    <option value="state">Deutsch (Deutschland)</option>
-                                                    <option value="state">English (Australia)</option>
-                                                    <option value="state">English (Canada)</option>
-                                                    <option value="state">English (India)</option>
-                                                    <option value="state">English (Ireland)</option>
-                                                    <option value="state">English (Maktoob)</option>
-                                                    <option value="state">English (Malaysia)</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12 col-md-12 col-sm-6">
-                                            <div class="level">
-                                                State/Province
-                                            </div>
-                                            <div class=" shipping-wrapper">
-                                                <select class="country">
-                                                    <option value="state">Select options</option>
-                                                    <option value="state">South Carolina</option>
-                                                    <option value="state">South Dakota</option>
-                                                    <option value="state">Tennessee</option>
-                                                    <option value="state">Texas</option>
-                                                    <option value="state">Utah</option>
-                                                    <option value="state">Vermont</option>
-                                                    <option value="state">Virginia</option>
-                                                    <option value="state">Washington</option>
-                                                    <option value="state">West Virginia</option>
-                                                    <option value="state">Wyoming</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12 col-md-12 col-sm-12">
-                                            <div class="postal-code">
-                                                <div class="level">
-                                                    Zip / Postal Code
-                                                </div>
-                                                <input type="text" placeholder="" name="zip-code">
-                                            </div>
-                                            <div class="buttons-set">
-                                                <button class="button" type="button"><span>Get a Quote</span></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="shipping-discount">
-                                    <div class="shipping-title">
-                                        <h3>Discount Code</h3>
-                                    </div>
-                                    <p>Enter your coupon code if you have one</p>
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12">
-                                            <div class="postal-code">
-                                                <input type="text" placeholder="">
-                                            </div>
-                                            <div class="buttons-set">
-                                                <button class="button" type="button"><span>Apply Coupon</span></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4 col-md-offset-8">
                                 <div class="amount-totals">
-                                    <p class="total">Subtotal <span>$156.87</span></p>
-                                    <p class="total">Grandtotal <span>$313.74</span></p>
+                                    <p class="total"><span></span></p>
+                                    <p class="total">Grandtotal <span>{{ cart.getTotal }}</span></p>
                                     <button class="button" type="button"><span>Procced to checkout</span></button>
                                     <div class="clearfix"></div>
                                     <p class="floatright">Checkout with multiples address</p>
@@ -142,8 +64,4 @@
         </div>
     </div>
     <!--End of Cart Main Area-->
-{% endblock %}
-
-{% block js %}
-    {{ parent() }}
 {% endblock %}

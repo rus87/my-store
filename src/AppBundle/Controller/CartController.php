@@ -20,9 +20,9 @@ class CartController extends BaseController
     {
         $cartManager = $this->get("cart_manager");
         //dump($cartManager->getCart());
-        $templateData['products'] = $cartManager->getCartProducts();
+        $templateData['cart'] = $cartManager->getCart();
         $templateData['currency'] = $this->get('currency_manager')->getClientCurrency();
-        $this->setProductsCurrency($templateData['products'], $templateData['currency']);
+        $this->setProductsCurrency($templateData['cart']->getProducts(), $templateData['currency']);
         $templateData['categories'] = $this->getDoctrine()->getManager()->getRepository("AppBundle:Category")
             ->findBy(['parent' => null]);
         $templateData['form'] = $this->handleCurrencyForm($request, 'app_cart_showcart');
@@ -49,7 +49,7 @@ class CartController extends BaseController
         $this->get("cart_manager")->removeProduct($product);
 
         if($_format == "json") return new JsonResponse($this->getJsonContentWithMiniPhoto());
-        elseif($_format == "html") return $this->redirectToRoute('app_cart_showcart');
+        else return $this->redirectToRoute('app_cart_showcart');
 
     }
 
