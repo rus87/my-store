@@ -19,6 +19,7 @@ class SecurityController extends BaseController
         $authenticationUtils = $this->get('security.authentication_utils');
         $query = $request->query->getAlnum('q');
         $className = $request->query->getAlnum('type');
+        $templateData['title'] = 'Sign-in';
         $templateData['form'] = $this->handleCurrencyForm($request, 'app_security_register');
         if($this->currencyRedirectResponse) return $this->currencyRedirectResponse;
         $templateData['searchForm'] = $this->handleSearchForm($request, ['className' => $className, 'query' => $query]);
@@ -39,6 +40,7 @@ class SecurityController extends BaseController
         $em = $this->getDoctrine()->getManager();
         $query = $request->query->getAlnum('q');
         $className = $request->query->getAlnum('type');
+        $templateData['title'] = 'Registration';
         $templateData['form'] = $this->handleCurrencyForm($request, 'app_security_register');
         if($this->currencyRedirectResponse) return $this->currencyRedirectResponse;
         $templateData['searchForm'] = $this->handleSearchForm($request, ['className' => $className, 'query' => $query]);

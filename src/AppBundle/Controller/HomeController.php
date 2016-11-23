@@ -25,6 +25,7 @@ class HomeController extends BaseController
         //$this->get('cart_manager')->toggleProduct($product);
         $templateData['categories'] = $this->getDoctrine()->getManager()->getRepository("AppBundle:Category")->findBy(['parent' => null]);
         $templateData['currency'] = $this->get('currency_manager')->getClientCurrency();
+        $templateData['title'] = 'Home';
         $templateData['form'] = $this->handleCurrencyForm($request, 'app_home_home', []);
         if($this->currencyRedirectResponse) return $this->currencyRedirectResponse;
         $templateData['searchForm'] = $this->handleSearchForm($request);

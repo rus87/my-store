@@ -61,9 +61,9 @@ class BaseController extends Controller
     }
 
     /**
-     * @return mixed
-     * @param Request
-     *
+     * @param Request $request
+     * @param null $formData
+     * @return \Symfony\Component\Form\FormView
      */
     protected function handleSearchForm(Request $request, $formData = null)
     {

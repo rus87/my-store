@@ -45,6 +45,7 @@ class ProductController extends BaseController
         $templateData['currency'] = $currency;
         $this->setProductsCurrency([$product], $currency);
         $templateData['product'] = $product;
+        $templateData['title'] = $product->getTitle();
         $templateData['crumbs'] = $crumbs;
         $templateData['randomProducts'] = [];
         foreach([1,2,3] as $i)

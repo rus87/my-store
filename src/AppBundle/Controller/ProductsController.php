@@ -38,6 +38,7 @@ class ProductsController extends BaseController
         $paginator = $this->get('app.product_paginator');
         $query = $request->query->getAlnum('q');
         $className = $request->query->getAlnum('type');
+        $templateData['title'] = 'Search Results';
         $templateData['numPages'] = $paginator->countSearchPages($query, $className);
         $templateData['productsCount'] = $this->get('product_manager')->countSearch($query, $className);
         $templateData['page']= $page;
@@ -88,6 +89,7 @@ class ProductsController extends BaseController
     {
         $filtersHandler = $this->get('filters_handler');
         $paginator = $this->get('app.product_paginator');
+        $templateData['title'] = 'Products';
         $templateData['numPages'] = $paginator->countPagesByCategory($categoryName);
         $templateData['orderByForm'] = $this->handleOrderByForm($request);
         $templateData['productsCount'] = $this->get('product_manager')->countByCategory($categoryName);
@@ -128,6 +130,7 @@ class ProductsController extends BaseController
         $this->getDoctrine()->getManager()->getRepository('AppBundle:Category')->getAllAsCatalog();
         $filtersHandler = $this->get('filters_handler');
         $paginator = $this->get('app.product_paginator');
+        $templateData['title'] = 'Products';
         $templateData['productsCount'] = $this->get('product_manager')->countByBrand($brandId);
         $templateData['numPages'] = $paginator->countPagesByBrand($brandId);
         $templateData['orderByForm'] = $this->handleOrderByForm($request);

@@ -30,6 +30,7 @@ class CheckoutController extends BaseController
             'categories' => $em->getRepository('AppBundle:Category')->findBy(['parent' => null]),
             'currency' => $currency
         ];
+        $templateData['title'] = 'Checkout';
         $templateData['searchForm'] = $this->handleSearchForm($request);
         if($this->searchRedirectResponse) return $this->searchRedirectResponse;
         $templateData['form'] = $this->handleCurrencyForm($request, 'app_checkout_index');

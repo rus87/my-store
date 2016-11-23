@@ -24,6 +24,7 @@ class CabinetController extends BaseController
     {
         $product = $this->getDoctrine()->getManager()->getRepository("AppBundle:Product")->find(800);
         //$this->get('user_manager')->toggleProductInWishlist($product);
+        $templateData['title'] = 'Wishlist';
         $templateData['currency'] = $this->get('currency_manager')->getClientCurrency();
         $templateData['form'] = $this->handleCurrencyForm($request, 'app_usercabinet_cabinet_showwishlist');
         if($this->currencyRedirectResponse) return $this->currencyRedirectResponse;
