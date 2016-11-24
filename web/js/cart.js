@@ -1,15 +1,15 @@
 $(document).ready(function(){
 
-    updateMiniCart('app_cart_getproducts', null);
+    updateMiniCart('app_cart_update', null);
 
     $(document).on("click", ".cart-product-info .remove-product", function()
     {
-        updateMiniCart('app_cart_removeproduct', {productId: $(this).html(), _format: 'json'});
+        updateMiniCart('app_cart_update', {id: $(this).html(), action: 'remove'});
     });
 
     $(document).on("click", ".add-to-cart", function(){
         var productId = $(this).parent().find('span:first').text();
-        updateMiniCart('app_cart_toggleproduct', {id: productId});
+        updateMiniCart('app_cart_update', {id: productId, action: 'toggle'});
         if($('i.fa-shopping-cart',this).hasClass('fa-icon-red'))
             $('i.fa-shopping-cart',this).removeClass('fa-icon-red');
         else

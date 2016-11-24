@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use JMS\Serializer\SerializationContext;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CartController extends BaseController
 {
@@ -54,52 +55,52 @@ class CartController extends BaseController
 
     }
 
-    /**
-     * @Route(
-     *      path="/cart/add/{productId}.{_format}",
-     *      requirements = {"productId" : "\d+", "_format" : "html|json"},
-     *      options={"expose" : "true"})
-     * @return Response|JsonResponse
-     */
-    public function addProductAction($productId, $_format)
-    {
-        $product = $this->getDoctrine()->getManager()->getRepository("AppBundle:Product")->find($productId);
-        if (!$product)
-            throw $this->createNotFoundException('Нет продукта с идом '.$productId);
-        try{
-            $this->get('cart_manager')->pullProduct($product);
-        }
-        catch(UniqueConstraintViolationException $e){
-            return new Response("Already in cart!");
-        }
-        if($_format == 'html') return $this->redirectToRoute('app_cart_showcart');
-        else return new JsonResponse($this->getJsonContentWithMiniPhoto());
-    }
 
     /**
+     * @param null $id
+     * @return JsonResponse
+     * @throws NotFoundHttpException
      * @Route(
-     *      path="/cart/toggle/{id}",
+     *      path="/cart/update/{action}/{id}",
      *      requirements = {"id" : "\d+"},
      *      options={"expose" : "true"})
-     * @return JsonResponse
      */
-    public function toggleProductAction($id)
+    public function updateAction($id = null, $action = null)
     {
-        $product = $this->getDoctrine()->getRepository("AppBundle:Product")->find($id);
-        if (!$product)
-            throw $this->createNotFoundException('Нет продукта с идом '.$id);
-        $cart = $this->get('cart_manager')->toggleProduct($product);
-        $this->setProductsCurrency($cart->getProducts(), $this->get('currency_manager')->getClientCurrency());
-        foreach ($cart->getProducts() as &$product) {
-            $miniCartPhotoPath = $this->get('liip_imagine.cache.manager')
-                ->getBrowserPath($product->getMainPhoto1Path(), 'mini_cart_thumb');
-            $product->setMiniCartPhotoPath($miniCartPhotoPath);
-            $product->priceDisc = $product->getPrice(true);
+        $cartManager = $this->get('cart_manager');
+        if($id){
+            $product = $this->getDoctrine()->getManager()->getRepository("AppBundle:Product")->find($id);
+            if(!$product)
+                throw new NotFoundHttpException(sprintf('No product with id=$d', $id));
         }
+        else
+            $action = 'get';
 
-        $productsJson = $this->get('jms_serializer')
-            ->serialize($cart->getProducts(), 'json', SerializationContext::create()->enableMaxDepthChecks());
-        return new JsonResponse($productsJson);
+        if($action == 'toggle')
+            $cart = $cartManager->toggleProduct($product);
+        elseif($action == 'add')
+            $cart = $cartManager->pullProduct($product);
+        elseif($action == 'remove')
+            $cart = $cartManager->removeProduct($product);
+        else
+            $cart = $cartManager->getCart();
+
+        if(! $cart->getProducts()->isEmpty())
+        {
+            $this->setProductsCurrency($cart->getProducts(), $this->get('currency_manager')->getClientCurrency());
+            foreach ($cart->getProducts() as &$product) {
+                $product->setMiniCartPhotoPath($this->get('liip_imagine.cache.manager')
+                    ->getBrowserPath($product->getMainPhoto1Path(), 'mini_cart_thumb'));
+                $product->priceDisc = $product->getPrice(true);
+            }
+
+            $productsJson = $this->get('jms_serializer')
+                ->serialize($cart->getProducts(), 'json', SerializationContext::create()->enableMaxDepthChecks());
+            $response = new JsonResponse($productsJson);
+        }
+        else
+            $response = new JsonResponse('null');
+        return $response;
     }
 
     /**
