@@ -83,5 +83,22 @@ class CabinetController extends BaseController
         return $response;
     }
 
+    /**
+     * @param $request
+     * @return Response
+     * @Route(path="/cabinet/shippings")
+     */
+    public function showShippingsAction(Request $request)
+    {
+        $templateData['title'] = 'Wishlist';
+        $templateData['currency'] = $this->get('currency_manager')->getClientCurrency();
+        $templateData['form'] = $this->handleCurrencyForm($request, 'app_usercabinet_cabinet_showwishlist');
+        if($this->currencyRedirectResponse) return $this->currencyRedirectResponse;
+        $templateData['searchForm'] = $this->handleSearchForm($request);
+        if($this->searchRedirectResponse) return $this->searchRedirectResponse;
+
+        return $this->render('User/Shippings.html.twig', $templateData);
+    }
+
 
 }
