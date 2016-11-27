@@ -49,3 +49,9 @@ services:
     user_manager:
         class: AppBundle\Utils\UserManager\UserManager
         arguments: ['@doctrine.orm.entity_manager', '@security.authorization_checker', '@security.token_storage']
+
+    booking_type:
+        class: AppBundle\Form\BookingType
+        arguments: ['@user_manager']
+        tags: [name: 'form.type']
+            #- { name: form.type }

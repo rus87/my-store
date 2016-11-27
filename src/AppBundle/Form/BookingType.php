@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Utils\UserManager\UserManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -10,10 +11,32 @@ use AppBundle\Form\ShippingType;
 
 class BookingType extends AbstractType
 {
+    /**
+     * @var UserManager
+     */
+    private $userManager;
+
+    /**
+     * @var string
+     */
+    private $email;
+
+    /**
+     * @param UserManager $userManager
+     */
+    public function __construct(UserManager $userManager)
+    {
+        $this->userManager = $userManager;
+
+        if(($user = $this->userManager->getCurrentUser()) != null)
+            $this->email = $user->getEmail();
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+
         $builder
-            ->add('email', TextType::class)
+            ->add('email', TextType::class, ['data' => $this->email])
             ->add('shipping', ShippingType::class,
                 [
                     'em' => $options['em'],

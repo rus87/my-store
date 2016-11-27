@@ -123,7 +123,7 @@ class Cart
         $products = $this->getProducts()->getValues();
         if($products != null)
             foreach($products as $product)
-                $total += $product->getPrice();
+                $total += $product->getPrice(true);
         return $total;
     }
 

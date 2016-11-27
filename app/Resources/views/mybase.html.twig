@@ -86,18 +86,6 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="language-menu">
-                                <ul>
-                                    <li><a href="#">English <i class="fa fa-angle-down"></i></a>
-                                        <ul class="language-dropdown">
-                                            <li><a href="#">French</a></li>
-                                            <li><a href="#">English</a></li>
-                                            <li><a href="#">German</a></li>
-                                            <li><a href="#">Arabic</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
                             <div class="account-menu">
                                 {% set privateArea = 'Private Area' %}
                                 {% set user = user_manager.getCurrentUser %}
@@ -105,7 +93,7 @@
                                      {% set privateArea = user.email %}
                                 {% endif %}
                                 <ul>
-                                    <li><a href="account.html">{{ privateArea }} <i class="fa fa-angle-down"></i></a>
+                                    <li><a href="{{ path('app_usercabinet_cabinet_showshippings') }}">{{ privateArea }} <i class="fa fa-angle-down"></i></a>
                                         <ul class="account-dropdown">
                                             <li><a href="{{ path('app_usercabinet_cabinet_showwishlist') }}">My Wishlist</a></li>
                                             <li><a href="{{ path('app_cart_showcart') }}">My Cart</a></li>
@@ -152,7 +140,7 @@
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-4">
                         <ul class="header-r-cart">
-                            <li><a class="cart" href="{{ path('app_cart_showcart') }}">My Cart: <span>0</span> items</a>
+                            <li><a class="cart" href="{{ path('app_cart_showcart') }}"><span>My Cart: empty</span></a>
                                 <div class="mini-cart-content">
                                     <div class="cart-products-list">
                                     <!--
@@ -199,7 +187,6 @@
                                     <li><a href="{{ path('app_products_showbycategory', {'categoryName': 'sweater'}) }}">Sweaters</a></li>
                                     <li><a href="{{ path('app_products_showbycategory', {'categoryName': 'blouse'}) }}">Blouses</a></li>
                                     <li><a href="{{ path('app_products_showbycategory', {'categoryName': 'trousers'}) }}">Trousers</a></li>
-                                    <li><a href="contact.html">Contact Us</a></li>
                                 </ul>
                             </nav>
                         </div>

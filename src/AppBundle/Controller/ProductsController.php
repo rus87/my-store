@@ -36,7 +36,7 @@ class ProductsController extends BaseController
     {
         $filtersHandler = $this->get('filters_handler');
         $paginator = $this->get('app.product_paginator');
-        $query = $request->query->getAlnum('q');
+        $query = $request->query->get('q');
         $className = $request->query->getAlnum('type');
         $templateData['title'] = 'Search Results';
         $templateData['numPages'] = $paginator->countSearchPages($query, $className);

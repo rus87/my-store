@@ -16,10 +16,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use JMS\Serializer\SerializationContext;
 use AppBundle\Form\ShippingType;
 
+/**
+ * Class CabinetController
+ * @package AppBundle\Controller\UserCabinet
+ * @Security("has_role('ROLE_USER')")
+ */
 class CabinetController extends BaseController
 {
     /**
-     * @Security("has_role('ROLE_USER')")
      * @Route(path="/cabinet/wishlist")
      */
     public function showWishlistAction(Request $request)
@@ -42,7 +46,6 @@ class CabinetController extends BaseController
     
 
     /**
-     * @Security("has_role('ROLE_USER')")
      * @Route(
      *      path="/cabinet/wishlist/update/{action}/{id}",
      *      requirements={"id" : "\d+"},
@@ -89,6 +92,7 @@ class CabinetController extends BaseController
      * @param $request
      * @return Response
      * @Route(path="/cabinet/shippings")
+     *
      */
     public function showShippingsAction(Request $request)
     {
@@ -100,12 +104,10 @@ class CabinetController extends BaseController
         if($this->currencyRedirectResponse) return $this->currencyRedirectResponse;
         $templateData['searchForm'] = $this->handleSearchForm($request);
         if($this->searchRedirectResponse) return $this->searchRedirectResponse;
-
         $shipping = new Shipping();
         $form = $this->createForm(ShippingType::class, $shipping,
             ['em' => $em, 'user_id' => $user->getId(), 'select_ph' => 'Create new']);
         $templateData['shippingForm'] = $form->createView();
-
         $form->handleRequest($request);
         if($form->isValid()){
             if($form->get('save')->isClicked()){

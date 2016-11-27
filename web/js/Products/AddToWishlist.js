@@ -3,6 +3,9 @@ $(document).ready(function() {
     $(document).on("click", ".link-wishlist", function () {
         var productContext = $(this).parent().parent().parent();
         var productId = $("span.product-id", productContext).text();
+        if(! productId)
+            productId = $('span.product-id').text();
+        console.log(productId);
 
         $.ajax({
             method: "POST",
