@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Shipping
@@ -21,6 +22,12 @@ class Shipping
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
+    /**
+     * @var string
+     * @ORM\Column(name="title", type="string", length=50)
+     */
+    private $title;
 
     /**
      * @var string
@@ -68,11 +75,13 @@ class Shipping
 
     /**
      * @ORM\OneToMany(targetEntity="Booking", mappedBy="shipping", cascade={}, fetch="EAGER")
+     * @Exclude()
      */
     private $bookings;
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="shippings")
+     * @Exclude()
      */
     private $user;
 
@@ -276,7 +285,7 @@ class Shipping
     /**
      * Set user
      *
-     * @param string $user
+     * @param User $user
      *
      * @return Shipping
      */
@@ -295,5 +304,23 @@ class Shipping
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param $title
+     * @return $this
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
     }
 }

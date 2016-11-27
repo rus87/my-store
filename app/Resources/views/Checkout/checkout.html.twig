@@ -65,6 +65,11 @@
                                 <div class="panel-body">
                                     <div class="form">
                                         <div class="col-xs-6">
+                                            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                                                <div class="form-group">
+                                                    {{ form_widget(checkoutForm.shipping.shipping_select, {'attr': {'class': 'form-control'}}) }}
+                                                </div>
+                                            {% endif %}
                                             <div class="form-group">
                                                 {{ form_label(checkoutForm.shipping.company) }}
                                                 <div id="shipping-company-error" class="form-error"></div>
@@ -100,10 +105,6 @@
                                                     'data-format': '+380 (dd) ddd-dd-dd'
                                                 }}) }}
                                             </div>
-                                        </div>
-                                        <div class="buttons-set">
-                                            <p class="back-link"><a href="#">Back</a></p>
-                                            <button class="button" type="button"><span>Continue</span></button>
                                         </div>
                                     </div>
                                 </div>
@@ -149,6 +150,9 @@
                                         <p class="floatleft">Forgot an Item? <a href="{{ path('app_cart_showcart') }}">Edit Your Cart</a>
                                         </p>
                                         <button type="submit" {% if cart.isEmpty %} disabled {% endif %} class="button floatright"><span>Place Order</span></button>
+                                        {% do checkoutForm.shipping.delete.setRendered %}
+                                        {% do checkoutForm.shipping.title.setRendered %}
+                                        {% do checkoutForm.shipping.save.setRendered %}
                                         {{ form_end(checkoutForm) }}
                                     </div>
                                 </div>
@@ -168,4 +172,7 @@
     <script src="{{ asset("js/Checkout/formHandler.js") }}" type="text/javascript"></script>
     <script src="{{ asset("js/bootstrap-formhelpers.min.js") }}" type="text/javascript"></script>
     <script src="{{ asset("js/bootstrap-formhelpers-phone.js") }}" type="text/javascript"></script>
+    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+        <script src="{{ asset("js/Cabinet/Shipping.js") }}" type="text/javascript"></script>
+    {% endif %}
 {% endblock %}

@@ -5,6 +5,7 @@ namespace AppBundle\Controller\UserCabinet;
 
 
 use AppBundle\Controller\BaseController;
+use Proxies\__CG__\AppBundle\Entity\Shipping;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use JMS\Serializer\SerializationContext;
+use AppBundle\Form\ShippingType;
 
 class CabinetController extends BaseController
 {
@@ -90,6 +92,8 @@ class CabinetController extends BaseController
      */
     public function showShippingsAction(Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->get('user_manager')->getCurrentUser();
         $templateData['title'] = 'Wishlist';
         $templateData['currency'] = $this->get('currency_manager')->getClientCurrency();
         $templateData['form'] = $this->handleCurrencyForm($request, 'app_usercabinet_cabinet_showwishlist');
@@ -97,7 +101,60 @@ class CabinetController extends BaseController
         $templateData['searchForm'] = $this->handleSearchForm($request);
         if($this->searchRedirectResponse) return $this->searchRedirectResponse;
 
+        $shipping = new Shipping();
+        $form = $this->createForm(ShippingType::class, $shipping,
+            ['em' => $em, 'user_id' => $user->getId(), 'select_ph' => 'Create new']);
+        $templateData['shippingForm'] = $form->createView();
+
+        $form->handleRequest($request);
+        if($form->isValid()){
+            if($form->get('save')->isClicked()){
+                if(($existingShipping = $form['shipping_select']->getData()) == null){
+                    $shipping->setUser($user);
+                    $em->persist($shipping);
+                }
+                else{
+                    $existingShipping->setTitle($shipping->getTitle());
+                    $existingShipping->setCompany($shipping->getCompany());
+                    $existingShipping->setStorageNum($shipping->getStorageNum());
+                    $existingShipping->setCity($shipping->getCity());
+                    $existingShipping->setStorageAddress($shipping->getStorageAddress());
+                    $existingShipping->setClientTel($shipping->getClientTel());
+                    $existingShipping->setClientFio($shipping->getClientFio());
+                }
+            }
+            if($form->get('delete')->isClicked()){
+                if(($existingShipping = $form['shipping_select']->getData()) != null){
+                    $em->persist($existingShipping);
+                    foreach($em->getRepository('AppBundle:Booking')->findBy(['shipping' => $existingShipping]) as $booking)
+                        $booking->setShipping(null);
+                    $em->remove($existingShipping);
+                }
+            }
+            $em->flush();
+            return $this->redirectToRoute('app_usercabinet_cabinet_showshippings');
+        }
+
         return $this->render('User/Shippings.html.twig', $templateData);
+    }
+
+    /**
+     * @param $id
+     * @Route(path="/cabinet/get-shipping/{id}",
+     *      requirements={"id": "\d+"},
+     *      options={"expose"=true})
+     * @return JsonResponse
+     */
+    public function getShippingAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('AppBundle:Shipping');
+        $shipping = $repo->find($id);
+        if(! $shipping)
+            throw new NotFoundHttpException(sprintf("Shipping with id=%d not found", $id));
+        $shippingJson = $this->get('jms_serializer')
+            ->serialize($shipping, 'json');
+        return new JsonResponse($shippingJson);
     }
 
 

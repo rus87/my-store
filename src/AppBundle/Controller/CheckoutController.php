@@ -19,11 +19,19 @@ class CheckoutController extends BaseController
      */
     public function indexAction(Request $request)
     {
+        $uid = null;
+        if(($user = $this->get('user_manager')->getCurrentUser()) != null)
+            $uid = $user->getId();
         $em = $this->getDoctrine()->getManager();
         $currency = $this->get('currency_manager')->getClientCurrency();
         $cart = $this->get("cart_manager")->getCart();
         $this->get('currency_manager')->setProductsCurrency($cart->getProducts());
-        $checkoutForm = $this->createForm(BookingType::class, new Booking(), ['attr' => ['id' => 'checkout_form', 'onSubmit' => 'send_form()']]);
+        $checkoutForm = $this->createForm(BookingType::class, new Booking(),
+            [
+                'attr' => ['id' => 'checkout_form', 'onSubmit' => 'send_form()'],
+                'em' => $em,
+                'user_id' => $uid
+            ]);
         $templateData = [
             'checkoutForm' => $checkoutForm->createView(),
             'cart' => $cart,

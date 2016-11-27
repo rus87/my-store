@@ -14,7 +14,11 @@ class BookingType extends AbstractType
     {
         $builder
             ->add('email', TextType::class)
-            ->add('shipping', ShippingType::class);
+            ->add('shipping', ShippingType::class,
+                [
+                    'em' => $options['em'],
+                    'user_id' => $options['user_id']
+                ]);
         $builder->setAction('javascript:void(null);');
     }
 
@@ -22,7 +26,9 @@ class BookingType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => 'AppBundle\Entity\Booking'
+                'data_class' => 'AppBundle\Entity\Booking',
+                'em' => null,
+                'user_id' => null
             ]
         );
     }

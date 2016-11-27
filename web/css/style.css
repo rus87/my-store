@@ -2412,7 +2412,7 @@ span.required {
     border: 1px solid #f2f2f2;
     color: #444443;
     padding: 5px;
-    text-align: center;
+    /*text-align: center;*/
     width: 3em;
 }
 .cart-main-area .cart-table .p-action > a, .wishlist-concept .p-action > a
@@ -2575,7 +2575,7 @@ span.required {
 }
 .wishlist-concept form input {
     display: block;
-    margin: 6px auto 0px;
+    /*margin: 6px auto 0px;*/
     padding: 2px;
     width: 33px;
 }
@@ -3937,4 +3937,5 @@ ul.level-2 {
 }
 
 .fa-icon-red{color: #e03550;}
+
 
