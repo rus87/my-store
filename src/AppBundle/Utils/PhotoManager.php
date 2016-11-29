@@ -53,14 +53,14 @@ class PhotoManager
             $product = $productRepo->findOneBy(['mainPhoto1' => $photo->getId()]);
             if($product){
                 $this->cacheManager->remove($product->getMainPhoto1Path());
-                unlink('/var/www/html/web/'.$product->getMainPhoto1Path());
+                unlink($product->getMainPhoto1Path());
                 $product->setMainPhoto1(null);
             }
             else{
                 $product = $productRepo->findOneBy(['mainPhoto2' => $photo->getId()]);
                 if($product){
                     $this->cacheManager->remove($product->getMainPhoto2Path());
-                    unlink('/var/www/html/web/'.$product->getMainPhoto2Path());
+                    unlink($product->getMainPhoto2Path());
                     $product->setMainPhoto2(null);
                 }
             }
