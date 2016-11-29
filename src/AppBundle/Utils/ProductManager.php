@@ -176,7 +176,7 @@ class ProductManager
         if( ($oldPhoto = $product->$getMainPhoto()) != null )
             $this->photoManager->remove($oldPhoto->getId());
         $product->$setMainPhoto($photo);
-        $file->move('/var/www/html/web/'.$product->getPhotosDirectory(), $photo->getName());
+        $file->move($product->getPhotosDirectory(), $photo->getName());
         $this->photoManager->downscale($product->getPhotosDirectory().'/'.$photo->getName());
         $this->em->flush();
     }
