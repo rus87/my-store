@@ -87,9 +87,10 @@ swiftmailer:
     password:  "%mailer_password%"
     spool:     { type: memory }
 
+gregwar_captcha: ~
+
 
 liip_imagine:
-
     resolvers:
         default:
             web_path:

@@ -41,7 +41,7 @@ class ShippingType extends AbstractType
             'mapped' => false,
             'required' => false,
             'empty_data' => null,
-            'placeholder' => $ph
+            'placeholder' => $ph,
         ];
 
     }

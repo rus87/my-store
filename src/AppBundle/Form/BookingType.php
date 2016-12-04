@@ -40,7 +40,8 @@ class BookingType extends AbstractType
             ->add('shipping', ShippingType::class,
                 [
                     'em' => $options['em'],
-                    'user_id' => $options['user_id']
+                    'user_id' => $options['user_id'],
+                    'allow_extra_fields' => true
                 ]);
         $builder->setAction('javascript:void(null);');
     }

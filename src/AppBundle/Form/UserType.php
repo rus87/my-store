@@ -7,6 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Gregwar\CaptchaBundle\Type\CaptchaType;
 
 class UserType extends AbstractType
 {
@@ -19,6 +20,7 @@ class UserType extends AbstractType
                 'second_options' => array('label' => 'Repeat Password'),
             )
         );
+        $builder->add('captcha', CaptchaType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)

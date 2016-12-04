@@ -9,6 +9,9 @@ $(document).ready(function(){
 
     $(document).on("click", ".add-to-cart", function(){
         var productId = $(this).parent().find('span:first').text();
+        if(! productId)
+            productId = $('.modal-product').find('span.product-id').text();
+        console.log(productId);
         updateMiniCart('app_cart_update', {id: productId, action: 'toggle'});
         if($('i.fa-shopping-cart',this).hasClass('fa-icon-red'))
             $('i.fa-shopping-cart',this).removeClass('fa-icon-red');
