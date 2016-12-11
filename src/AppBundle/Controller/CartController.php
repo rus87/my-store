@@ -58,6 +58,7 @@ class CartController extends BaseController
 
     /**
      * @param null $id
+     * @param null $action
      * @return JsonResponse
      * @throws NotFoundHttpException
      * @Route(
@@ -68,26 +69,32 @@ class CartController extends BaseController
     public function updateAction($id = null, $action = null)
     {
         $cartManager = $this->get('cart_manager');
-        if($id){
-            $product = $this->getDoctrine()->getManager()->getRepository("AppBundle:Product")->find($id);
-            if(!$product)
+        if ($id) {
+            $product = $this->getDoctrine()->getManager()
+                ->getRepository("AppBundle:Product")->find($id);
+            if (!$product) {
                 throw new NotFoundHttpException(sprintf('No product with id=$d', $id));
-        }
-        else
+            }
+        } else {
             $action = 'get';
+        }
 
-        if($action == 'toggle')
+        if ($action == 'toggle') {
             $cart = $cartManager->toggleProduct($product);
-        elseif($action == 'add')
+        } elseif ($action == 'add') {
             $cart = $cartManager->pullProduct($product);
-        elseif($action == 'remove')
+        } elseif ($action == 'remove') {
             $cart = $cartManager->removeProduct($product);
-        else
+        } else {
             $cart = $cartManager->getCart();
+        }
 
-        if(! $cart->getProducts()->isEmpty())
+        if(!$cart->getProducts()->isEmpty())
         {
-            $this->setProductsCurrency($cart->getProducts(), $this->get('currency_manager')->getClientCurrency());
+            $this->setProductsCurrency(
+                $cart->getProducts(),
+                $this->get('currency_manager')->getClientCurrency()
+            );
             foreach ($cart->getProducts() as &$product) {
                 $product->setMiniCartPhotoPath($this->get('liip_imagine.cache.manager')
                     ->getBrowserPath($product->getMainPhoto1Path(), 'mini_cart_thumb'));
@@ -95,11 +102,15 @@ class CartController extends BaseController
             }
 
             $productsJson = $this->get('jms_serializer')
-                ->serialize($cart->getProducts(), 'json', SerializationContext::create()->enableMaxDepthChecks());
+                ->serialize(
+                    $cart->getProducts(),
+                    'json',
+                    SerializationContext::create()->enableMaxDepthChecks()
+                );
             $response = new JsonResponse($productsJson);
-        }
-        else
+        } else {
             $response = new JsonResponse('null');
+        }
         return $response;
     }
 
@@ -142,6 +153,11 @@ class CartController extends BaseController
                 ->serialize($products, "json", SerializationContext::create()->enableMaxDepthChecks());
         }
         else return '{"products": null}';
+    }
+
+    public function add($a, $b)
+    {
+        return $a + $b;
     }
 
 }

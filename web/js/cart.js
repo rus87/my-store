@@ -31,6 +31,7 @@ $(document).ready(function(){
             url: Routing.generate(controllerActionPathName, pathParams, true),
             success: function(response)
             {
+                console.log(response);
                 var products = JSON.parse(response);
                 if(typeof products === 'object' && products != null)
                     products = Object.values(products);
