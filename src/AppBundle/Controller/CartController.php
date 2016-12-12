@@ -57,14 +57,15 @@ class CartController extends BaseController
 
 
     /**
-     * @param null $id
-     * @param null $action
-     * @return JsonResponse
-     * @throws NotFoundHttpException
+     * @param null|int $id
+     * @param null|string $action
      * @Route(
      *      path="/cart/update/{action}/{id}",
      *      requirements = {"id" : "\d+"},
      *      options={"expose" : "true"})
+     *
+     * @return JsonResponse
+     * @throws NotFoundHttpException
      */
     public function updateAction($id = null, $action = null)
     {
@@ -79,11 +80,11 @@ class CartController extends BaseController
             $action = 'get';
         }
 
-        if ($action == 'toggle') {
+        if ('toggle' == $action) {
             $cart = $cartManager->toggleProduct($product);
-        } elseif ($action == 'add') {
+        } elseif ('add' == $action) {
             $cart = $cartManager->pullProduct($product);
-        } elseif ($action == 'remove') {
+        } elseif ('remove' == $action) {
             $cart = $cartManager->removeProduct($product);
         } else {
             $cart = $cartManager->getCart();
@@ -91,10 +92,7 @@ class CartController extends BaseController
 
         if(!$cart->getProducts()->isEmpty())
         {
-            $this->setProductsCurrency(
-                $cart->getProducts(),
-                $this->get('currency_manager')->getClientCurrency()
-            );
+            $this->setProductsCurrency($cart->getProducts(), $this->get('currency_manager')->getClientCurrency());
             foreach ($cart->getProducts() as &$product) {
                 $product->setMiniCartPhotoPath($this->get('liip_imagine.cache.manager')
                     ->getBrowserPath($product->getMainPhoto1Path(), 'mini_cart_thumb'));
@@ -102,11 +100,7 @@ class CartController extends BaseController
             }
 
             $productsJson = $this->get('jms_serializer')
-                ->serialize(
-                    $cart->getProducts(),
-                    'json',
-                    SerializationContext::create()->enableMaxDepthChecks()
-                );
+                ->serialize($cart->getProducts(), 'json', SerializationContext::create()->enableMaxDepthChecks());
             $response = new JsonResponse($productsJson);
         } else {
             $response = new JsonResponse('null');
