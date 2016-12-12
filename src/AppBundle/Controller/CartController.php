@@ -61,8 +61,8 @@ class CartController extends BaseController
      * @param null|string $action
      * @Route(
      *      path="/cart/update/{action}/{id}",
-     *      requirements = {"id" : "\d+"},
-     *      options={"expose" : "true"})
+     *      requirements = {"id":"\d+"},
+     *      options={"expose":"true"})
      *
      * @return JsonResponse
      * @throws NotFoundHttpException
