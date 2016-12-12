@@ -31,6 +31,11 @@ class CartControllerTest extends WebTestCase
         $this->assertTrue($client->getResponse()->headers->contains('Content-Type', 'application/json'));
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertNotRegexp('/.+:1000.+/', $client->getResponse()->getContent());
+        
+        
+        $client->request('GET', '/cart/update/toggle/1000');
+        $this->assertTrue($client->getResponse()->headers->contains('Content-Type', 'application/json'));
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
 
         $client->request('GET', '/cart/update/add/9999999');
