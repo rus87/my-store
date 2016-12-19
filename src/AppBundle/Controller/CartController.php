@@ -79,7 +79,8 @@ class CartController extends BaseController
      * @Route(
      *      path="/cart/update/{action}/{id}",
      *      requirements = {"id":"\d+"},
-     *      options={"expose":"true"})
+     *      options={"expose":"true"}
+     * )
      *
      * @throws NotFoundHttpException
      *
