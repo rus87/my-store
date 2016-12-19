@@ -1,5 +1,4 @@
 <?php
-
 namespace AppBundle\Tests\Utils;
 
 use AppBundle\Entity\Cart;
@@ -13,7 +12,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Tests\AppBundle\Utils\UserManager\UserManagerTest;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-
 
 class CartManagerTest extends WebTestCase
 {
