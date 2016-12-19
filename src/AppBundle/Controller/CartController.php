@@ -1,14 +1,13 @@
 <?php
-
 namespace AppBundle\Controller;
 
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use AppBundle\Controller\BaseController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use JMS\Serializer\SerializationContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use JMS\Serializer\SerializationContext;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CartController extends BaseController
@@ -20,17 +19,23 @@ class CartController extends BaseController
     public function showCartAction(Request $request)
     {
         $cartManager = $this->get("cart_manager");
-        //dump($cartManager->getCart());
         $templateData['cart'] = $cartManager->getCart();
         $templateData['title'] = 'Cart';
         $templateData['currency'] = $this->get('currency_manager')->getClientCurrency();
-        $this->setProductsCurrency($templateData['cart']->getProducts(), $templateData['currency']);
-        $templateData['categories'] = $this->getDoctrine()->getManager()->getRepository("AppBundle:Category")
-            ->findBy(['parent' => null]);
+        $this->setProductsCurrency(
+            $templateData['cart']->getProducts(), 
+            $templateData['currency']
+        );
+        $templateData['categories'] = $this->getDoctrine()->getManager()
+            ->getRepository("AppBundle:Category")->findBy(['parent' => null]);
         $templateData['form'] = $this->handleCurrencyForm($request, 'app_cart_showcart');
-        if($this->currencyRedirectResponse) return $this->currencyRedirectResponse;
+        if($this->currencyRedirectResponse) {
+            return $this->currencyRedirectResponse;
+        }
         $templateData['searchForm'] = $this->handleSearchForm($request);
-        if($this->searchRedirectResponse) return $this->searchRedirectResponse;
+        if($this->searchRedirectResponse) {
+            return $this->searchRedirectResponse;
+        }
         return $this->render('Cart/cart.html.twig', $templateData);
     }
 
@@ -46,13 +51,17 @@ class CartController extends BaseController
     public function removeProductAction($productId, $_format)
     {
         $product = $this->getDoctrine()->getRepository("AppBundle:Product")->find($productId);
-        if (!$product)
+        if (!$product) {
             throw $this->createNotFoundException('Нет продукта с идом '.$productId);
+        }
         $this->get("cart_manager")->removeProduct($product);
 
-        if($_format == "json") return new JsonResponse($this->getJsonContentWithMiniPhoto());
-        else return $this->redirectToRoute('app_cart_showcart');
-
+        if($_format == "json") {
+            $response = new JsonResponse($this->getJsonContentWithMiniPhoto());
+        } else {
+            $response = $this->redirectToRoute('app_cart_showcart');
+        }
+        return $response;
     }
 
 
@@ -92,15 +101,21 @@ class CartController extends BaseController
 
         if(!$cart->getProducts()->isEmpty())
         {
-            $this->setProductsCurrency($cart->getProducts(), $this->get('currency_manager')->getClientCurrency());
+            $this->setProductsCurrency(
+                $cart->getProducts(), 
+                $this->get('currency_manager')->getClientCurrency()
+            );
             foreach ($cart->getProducts() as &$product) {
                 $product->setMiniCartPhotoPath($this->get('liip_imagine.cache.manager')
                     ->getBrowserPath($product->getMainPhoto1Path(), 'mini_cart_thumb'));
                 $product->priceDisc = $product->getPrice(true);
             }
 
-            $productsJson = $this->get('jms_serializer')
-                ->serialize($cart->getProducts(), 'json', SerializationContext::create()->enableMaxDepthChecks());
+            $productsJson = $this->get('jms_serializer')->serialize(
+                $cart->getProducts(), 
+                'json', 
+                SerializationContext::create()->enableMaxDepthChecks()
+            );
             $response = new JsonResponse($productsJson);
         } else {
             $response = new JsonResponse('null');
@@ -132,8 +147,7 @@ class CartController extends BaseController
     private function getJsonContentWithMiniPhoto()
     {
         $products = $this->get("cart_manager")->getCartProducts();
-        if($products)
-        {
+        if($products) {
             $products = $products->getValues();
             $this->setProductsCurrency($products, $this->get('currency_manager')->getClientCurrency());
             foreach ($products as &$product)
@@ -143,15 +157,15 @@ class CartController extends BaseController
                 $product->setMiniCartPhotoPath($miniCartPhotoPath);
                 $product->priceDisc = $product->getPrice(true);
             }
-            return $this->get('jms_serializer')
-                ->serialize($products, "json", SerializationContext::create()->enableMaxDepthChecks());
+            $output = $this->get('jms_serializer')->serialize(
+                $products, 
+                "json", 
+                SerializationContext::create()->enableMaxDepthChecks()
+            );
         }
-        else return '{"products": null}';
+        else {
+            $output = '{"products": null}';
+        }
+        return $output;
     }
-
-    public function add($a, $b)
-    {
-        return $a + $b;
-    }
-
 }
