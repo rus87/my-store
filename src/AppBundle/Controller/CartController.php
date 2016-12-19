@@ -6,15 +6,19 @@ use JMS\Serializer\SerializationContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+
 class CartController extends BaseController
 {
     /**
-     * @return Response
+     * @param Request $request 
      * @Route(path="/cart")
+     *
+     * @return Response
      */
     public function showCartAction(Request $request)
     {
@@ -41,12 +45,16 @@ class CartController extends BaseController
 
     /**
      * @param int $productId
-     * @param $_format
-     * @return JsonResponse|Response
+     * @param string $_format
      * @Route(
      *      path="/cart/remove/{productId}.{_format}",
      *      requirements = {"productId" : "\d+", "_format" : "html|json"},
-     *      options={"expose" : "true"})
+     *      options={"expose" : "true"}
+     * )
+     *
+     * @throws NotFoundHttpException
+     *
+     * @return JsonResponse|Response
      */
     public function removeProductAction($productId, $_format)
     {
@@ -73,8 +81,9 @@ class CartController extends BaseController
      *      requirements = {"id":"\d+"},
      *      options={"expose":"true"})
      *
-     * @return JsonResponse
      * @throws NotFoundHttpException
+     *
+     * @return JsonResponse     
      */
     public function updateAction($id = null, $action = null)
     {
@@ -125,6 +134,8 @@ class CartController extends BaseController
 
     /**
      * @Route(path="/cart/clear")
+     *
+     * @return RedirectResponse
      */
     public function clearAction()
     {
@@ -133,8 +144,9 @@ class CartController extends BaseController
     }
 
     /**
-     * @return JsonResponse
      * @Route(path="/cart/getproducts", options={"expose" : "true"})
+     *
+     * @return JsonResponse
      */
     public function getProductsAction()
     {
