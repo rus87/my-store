@@ -1,16 +1,15 @@
 <?php
-
 namespace AppBundle\Tests\Controller;
 
+use AppBundle\Entity\Product;
+use Doctrine\ORM\EntityManager;
+use AppBundle\Utils\CartManager;
 use AppBundle\Controller\CartController;
 use Symfony\Component\HttpKernel\Client;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use AppBundle\Utils\CartManager;
-use Doctrine\ORM\EntityManager;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\BrowserKit\Cookie;
-use AppBundle\Entity\Product;
 
 class CartControllerTest extends WebTestCase
 {
