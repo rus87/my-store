@@ -163,8 +163,7 @@ class CartController extends BaseController
         if($products) {
             $products = $products->getValues();
             $this->setProductsCurrency($products, $this->get('currency_manager')->getClientCurrency());
-            foreach ($products as &$product)
-            {
+            foreach ($products as &$product) {
                 $miniCartPhotoPath = $this->get('liip_imagine.cache.manager')
                     ->getBrowserPath($product->getMainPhoto1Path(), 'mini_cart_thumb');
                 $product->setMiniCartPhotoPath($miniCartPhotoPath);
