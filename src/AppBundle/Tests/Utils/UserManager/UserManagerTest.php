@@ -1,16 +1,16 @@
 <?php
 namespace AppBundle\Tests\Utils\UserManager;
 
-use AppBundle\Utils\UserManager\UserManager;
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\HttpKernel\Client;
+use Symfony\Component\BrowserKit\Cookie;
+use AppBundle\Utils\UserManager\UserManager;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use AppBundle\Entity\User;
-use Symfony\Component\HttpKernel\Client;
 
 class UserManagerTest extends WebTestCase
 {
