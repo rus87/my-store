@@ -60,7 +60,6 @@ class ProductCrudController extends Controller
             $productManager->setMainPhoto($product->getId(), $mainPhoto2File, 2);
             return $this->redirectToRoute('app_admin_productcrud_add', ['type' => $type]);
         }
-        dump($form->getErrors());
         return $this->render('Admin/ProductsAdd/'.ucfirst($type).'.html.twig',
             [
                 'form' => $form->createView(),
@@ -158,7 +157,6 @@ class ProductCrudController extends Controller
             $currentCatPath = array_merge($currentCatPath, $parents);
         $currentCatPath = array_reverse($currentCatPath);
         $templateData['products'] = $this->get('product_manager')->findByCategory($currentCat->getName());
-        dump($currentCatPath);
         $templateData['currentCatPath'] = $currentCatPath;
         return $this->render('Admin/Products-list.html.twig', $templateData);
     }
@@ -176,7 +174,6 @@ class ProductCrudController extends Controller
         if($form->isValid() && $form->isSubmitted())
         {
             $file = $photo->getName();
-            dump($file);
             $file->move($this->getParameter('photo_folder'), $file->getClientOriginalName());
             return $this->render("Admin/AdminBase.html.twig");
         }

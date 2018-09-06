@@ -20,9 +20,6 @@ class HomeController extends BaseController
      */
     public function homeAction(Request $request)
     {
-        $product = $this->getDoctrine()->getManager()->getRepository("AppBundle:Product")->find(550);
-        //$product = $this->get('user_manager')->getCurrentUser()->getWishlist()->getProducts()->getValues()[0];
-        //$this->get('cart_manager')->toggleProduct($product);
         $templateData['categories'] = $this->getDoctrine()->getManager()->getRepository("AppBundle:Category")->findBy(['parent' => null]);
         $templateData['currency'] = $this->get('currency_manager')->getClientCurrency();
         $templateData['title'] = 'Home';
@@ -38,11 +35,10 @@ class HomeController extends BaseController
      */
     public function testAction()
     {
-        //dump($this->get("cartManager")->getProducts());
         $dispatcher = $this->get("event_dispatcher");
         $myEvent = new MyEvent("input data for event");
         $dispatcher->dispatch("my_event", $myEvent);
-        //dump($this->getDoctrine()->getRepository("AppBundle:Product")->test());
+
         return $this->render("mybase.html.twig");
     }
 

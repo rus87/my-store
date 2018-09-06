@@ -28,7 +28,6 @@ class UserController extends Controller
         $userRepo = $em->getRepository('AppBundle:User');
         $user = $userRepo->find($id);
         if(!$user) throw new NotFoundHttpException('User with id= '.$id.' not found.');
-        dump($user);
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
         if($form->isValid()){
@@ -37,7 +36,7 @@ class UserController extends Controller
         }
         $templateData['form'] = $form->createView();
         $templateData['user'] = $user;
-        //dump($form->getErrors(true));
+
         return $this->render('Admin/EditUser.html.twig', $templateData);
     }
 }

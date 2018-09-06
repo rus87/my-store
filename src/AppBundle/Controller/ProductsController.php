@@ -163,7 +163,7 @@ class ProductsController extends BaseController
         $rootCats = $this->getDoctrine()->getManager()->getRepository("AppBundle:Category")->findBy(['parent' => null]);
         $catsStr = $this->get('jms_serializer')
             ->serialize($rootCats, 'json');
-        dump($catsStr);
+
         return new JsonResponse($catsStr);
     }
 

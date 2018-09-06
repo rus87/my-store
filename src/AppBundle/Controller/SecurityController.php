@@ -60,7 +60,6 @@ class SecurityController extends BaseController
             $em->persist($user);
             $em->flush();
         }
-        dump($user);
         $templateData['regForm'] = $regForm->createView();
         return $this->render('Security/registration.html.twig', $templateData);
     }

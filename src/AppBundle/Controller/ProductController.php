@@ -26,7 +26,6 @@ class ProductController extends BaseController
         $em = $this->getDoctrine()->getManager();
         $prodRepo = $em->getRepository('AppBundle:Product');
         $product = $prodRepo->find($id);
-        dump(explode('\\', get_class($product))[count(explode('\\', get_class($product)))-1]);
         $gender = $product->getGender();
         $currency = $this->get('currency_manager')->getClientCurrency();
         if(!$product) throw $this->createNotFoundException("No such product.");

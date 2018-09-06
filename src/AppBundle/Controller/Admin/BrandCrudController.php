@@ -30,7 +30,6 @@ class BrandCrudController extends Controller
         $form = $this->createForm(BrandType::class, $brand);
         $form->handleRequest($request);
         if($form->isValid()){
-            dump($brand);
             $em->persist($brand);
             $em->flush();
         }

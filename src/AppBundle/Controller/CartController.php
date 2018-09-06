@@ -20,7 +20,6 @@ class CartController extends BaseController
     public function showCartAction(Request $request)
     {
         $cartManager = $this->get("cart_manager");
-        //dump($cartManager->getCart());
         $templateData['cart'] = $cartManager->getCart();
         $templateData['title'] = 'Cart';
         $templateData['currency'] = $this->get('currency_manager')->getClientCurrency();
